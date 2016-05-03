@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,6 +24,8 @@ public class Main extends Application {
     private InetSocketAddress adrServeur;
     private ServerSocket socServer;
     private Socket socClient;
+
+    private BufferedReader reader;
     Stage window;
 
     public static void main(String args[]) {
@@ -36,6 +40,30 @@ public class Main extends Application {
         socClient.connect(adrServeur);
         System.out.println("Client connecte.");
 
+        String info = null;
+        //Lit les information envoyer par le serveur (Info carte)
+        reader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+
+        Boolean fini = false;
+
+        //Affiche info pour la carte dans la console.
+        //TODO prendre les informations pour afficher la carte plutôt que d'afficher les valeurs dans la console.
+        System.out.println("Information pour afficher la carte: ");
+        while (!fini) {
+            info = reader.readLine();
+
+            if (info != null) {
+                System.out.println(info);
+
+                if (info.equals("q")) {
+                    fini = true;
+                }
+            } else {
+                fini = true;
+            }
+        }
+
+        reader.close();
         window = primaryStage;
 
         window.setTitle("L'or du dragon");
