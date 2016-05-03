@@ -1,14 +1,18 @@
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.Group;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
+import javafx.scene.text.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -47,8 +51,8 @@ public class Main extends Application {
         Boolean fini = false;
 
         //Affiche info pour la carte dans la console.
-        //TODO prendre les informations pour afficher la carte plutôt que d'afficher les valeurs dans la console.
-        //Ceci doit être dans un thread séparé qui gère l'interface usagé.
+        //TODO prendre les informations pour afficher la carte plutot que d'afficher les valeurs dans la console.
+        //Ceci doit etre dans un thread separe qui gere l'interface usage.
         System.out.println("Information pour afficher la carte: ");
         while (!fini) {
             info = reader.readLine();
@@ -63,21 +67,38 @@ public class Main extends Application {
         reader.close();
         window = primaryStage;
 
+        //Declarations
         window.setTitle("L'or du dragon");
         Button logInButton = new Button("Connexion");
-        Label logInLabel = new Label("Connexion");
+        Label titleLabel = new Label("L'or du dragon");
+        Label usernameLabel = new Label("Username:");
         TextField userNameTextField = new TextField();
-        TextField passwordTextField = new TextField();
-        logInButton.setOnAction(e -> logIn(userNameTextField, passwordTextField));
+        Label passwordLabel = new Label("Password:");
+        PasswordField passwordField = new PasswordField();
+        logInButton.setOnAction(e -> logIn(userNameTextField, passwordField));
+
+        //Format page.
+        primaryStage.centerOnScreen();
+        usernameLabel.setFont(new Font(10));
+        passwordLabel.setFont(new Font(10));
+        userNameTextField.setPromptText("Your username");
+        passwordField.setPromptText("Your password");
+
+        //Title label.
+        titleLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 30));
+        titleLabel.setTextFill(Color.GREEN); //Text color.
+        titleLabel.setWrapText(true);
 
         // LogIn Layout
         VBox logInLayout = new VBox(5);
-        logInLayout.getChildren().add(logInLabel);
+        logInLayout.getChildren().add(titleLabel);
+        logInLayout.getChildren().add(usernameLabel);
         logInLayout.getChildren().add(userNameTextField);
-        logInLayout.getChildren().add(passwordTextField);
+        logInLayout.getChildren().add(passwordLabel);
+        logInLayout.getChildren().add(passwordField);
         logInLayout.getChildren().add(logInButton);
 
-        Scene logInScene = new Scene(logInLayout, 300, 150);
+        Scene logInScene = new Scene(logInLayout, 300, 180);
         window.setScene(logInScene);
         window.show();
     }
