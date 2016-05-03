@@ -48,16 +48,13 @@ public class Main extends Application {
 
         //Affiche info pour la carte dans la console.
         //TODO prendre les informations pour afficher la carte plutôt que d'afficher les valeurs dans la console.
+        //Ceci doit être dans un thread séparé qui gère l'interface usagé.
         System.out.println("Information pour afficher la carte: ");
         while (!fini) {
             info = reader.readLine();
 
             if (info != null) {
                 System.out.println(info);
-
-                if (info.equals("q")) {
-                    fini = true;
-                }
             } else {
                 fini = true;
             }
@@ -88,27 +85,6 @@ public class Main extends Application {
     private void logIn(TextField userNameTextField, TextField passwordTextField)
     {
         Group groupe = new Group();
-
-        // Un cercle
-        Circle cercle = new Circle(100, 100, 20);
-        cercle.setStroke(Color.BLACK);
-        cercle.setFill(null);
-        cercle.setStrokeWidth(1);
-        groupe.getChildren().add(cercle);
-
-        // Un rectangle
-        Rectangle rectangle = new Rectangle(200, 100, 50, 100);
-        rectangle.setStroke(Color.GREEN);
-        rectangle.setFill(Color.YELLOW);
-        rectangle.setStrokeWidth(3);
-        groupe.getChildren().add(rectangle);
-
-        // Une ligne
-        Line ligne = new Line(100, 100, 200, 100);
-        ligne.setStroke(Color.RED);
-        ligne.setStrokeWidth(1);
-        groupe.getChildren().add(ligne);
-
         Scene gameScene = new Scene(groupe,1280,720);
         window.setScene(gameScene);
         window.show();
