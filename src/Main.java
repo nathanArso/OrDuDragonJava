@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import java.awt.*;
 import javafx.scene.input.MouseEvent;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -31,13 +32,12 @@ public class Main extends Application {
     private InetSocketAddress adrServeur;
     private ServerSocket socServer;
     private Socket socClient;
-    //TESTS
-    Circle c1;
-    Circle c2;
-    boolean bleu = true;
 
     private BufferedReader reader;
     Stage window;
+
+    ArrayList<String> coords = new ArrayList<String>();
+    ArrayList<String> links = new ArrayList<String>();
 
     public static void main(String args[]) {
         launch(args);
@@ -48,19 +48,15 @@ public class Main extends Application {
     class changerCouleur implements Runnable {
         @Override
         public void run() {
-            if (bleu) {
-                c2.setFill(Color.YELLOW);
-                bleu = false;
-            } else {
-                c2.setFill(Color.BLUE);
-                bleu = true;
-            }
+            //TODO what happens when you click somewhere on map
         }
     }
     //Tâche sans fin
     class TacheParallele implements Runnable {
         public void run() {
             while (true) {
+                //TODO what happens every second (Refresh)
+                /*
                 // demande au UI Thread d'exécuter ce bout de code
                 Platform.runLater(() -> c1.setFill(Color.GREEN));
                 try {
@@ -71,7 +67,7 @@ public class Main extends Application {
                 Platform.runLater(() -> c1.setFill(Color.RED));
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ie) {}
+                } catch (InterruptedException ie) {} */
             }
         }
     }
@@ -79,7 +75,7 @@ public class Main extends Application {
     public void gererClic(MouseEvent e) {
         int x = (int)e.getX();
         int y = (int)e.getY();
-        System.out.println("Position de la sourisw: " + x + ", " + y);
+        System.out.println("Position de la souris: " + x + ", " + y);
 
         // demande au UI Thread d'exécuter ce bout de code
         Platform.runLater(new changerCouleur());
@@ -93,42 +89,8 @@ public class Main extends Application {
         socClient.connect(adrServeur);
         System.out.println("Client connecte.");
 
-        ArrayList<String> coords = new ArrayList<String>();
-        ArrayList<String> links = new ArrayList<String>();
-        //Lit les information envoyer par le serveur (Info carte)
-        reader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+        keepServerInfo(socClient);
 
-        Boolean fini = false;
-
-        //Affiche info pour la carte dans la console.
-        //TODO prendre les informations pour afficher la carte plutot que d'afficher les valeurs dans la console.
-        //Ceci doit etre dans un thread separe qui gere l'interface usage.
-        System.out.println("Information pour afficher la carte: ");
-
-        Boolean bLinks = false;
-
-        //Fill arays avec les informations de la carte
-        while (!fini) {
-
-            String line = reader.readLine();
-            if (!bLinks) {
-                coords.add(line);
-                if (line.equals("")){
-                    bLinks = true;
-                }
-            }
-            else if (bLinks) links.add(line);
-
-            if (line != null) {
-                System.out.println(line);
-            } else if (line != null){
-                System.out.println(line);
-            } else {
-                fini = true;
-            }
-        }
-
-        reader.close();
         window = primaryStage;
 
         //Declarations
@@ -166,6 +128,50 @@ public class Main extends Application {
         window.setScene(logInScene);
         window.show();
     }
+
+    private void keepServerInfo(Socket socClient){
+        try {
+            //Lit les information envoyer par le serveur (Info carte)
+            reader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+
+            Boolean fini = false;
+
+            //Affiche info pour la carte dans la console.
+            //TODO prendre les informations pour afficher la carte plutot que d'afficher les valeurs dans la console.
+            //Ceci doit etre dans un thread separe qui gere l'interface usage.
+            System.out.println("Information pour afficher la carte: ");
+
+            Boolean bLinks = false;
+
+            //Fill arays avec les informations de la carte
+            while (!fini) {
+
+                String line = reader.readLine();
+
+                if (!bLinks) {
+                    coords.add(line);
+                    if (line.equals("")){
+                        bLinks = true;
+                    }
+                }
+                else if (bLinks) links.add(line);
+
+                if (line != null) {
+                    System.out.println(line);
+                } else if (line != null){
+                    System.out.println(line);
+                } else {
+                    fini = true;
+                }
+            }
+
+            reader.close();
+        } catch(IOException io)
+        {
+            System.err.println("Erreur dans la lecture de la carte: " + io.getMessage());
+        }
+
+    }
     // Event clieck on connexion button
     private void logIn(TextField userNameTextField, TextField passwordTextField)
     {
@@ -176,6 +182,7 @@ public class Main extends Application {
         window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
         window.show();
 
+        groupe = initializeMap(groupe);
         // création d'une tâche parallèle pour ne pas geler le UI Thread
         Thread t = new Thread(new TacheParallele());
         // un thread "démon" s'arrêtera avec la fermeture de la fenêtre
@@ -187,4 +194,34 @@ public class Main extends Application {
 
     }
 
+    private Group initializeMap(Group groupe) {
+
+        ArrayList<Circle> circles = new ArrayList<Circle>();
+
+        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, circles);
+        //for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, lines);
+
+        return groupe;
+    }
+
+    private void generateCircle(Group groupe, int index, ArrayList<Circle> circles){
+        final int CIRCLE_RADIUS = 20;
+
+        if (!coords.get(index).equals(""))
+        {
+            Circle currentCircle = new Circle();
+
+            String info[] = coords.get(index).split(" ");
+            int x = Integer.parseInt(info[1]);
+            int y = Integer.parseInt(info[2]);
+
+            circles.add(new Circle(x, y, CIRCLE_RADIUS));
+            currentCircle = circles.get(index);
+            currentCircle.setStroke(Color.BLACK);
+            currentCircle.setFill(Color.RED);
+            currentCircle.setStrokeWidth(index);
+            groupe.getChildren().add(currentCircle);
+        }
+
+    }
 }
