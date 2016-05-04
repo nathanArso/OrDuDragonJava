@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,11 +17,13 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import javafx.scene.input.MouseEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Main extends Application {
     public static final int PORT = 51005;
@@ -28,12 +31,58 @@ public class Main extends Application {
     private InetSocketAddress adrServeur;
     private ServerSocket socServer;
     private Socket socClient;
+    //TESTS
+    Circle c1;
+    Circle c2;
+    boolean bleu = true;
 
     private BufferedReader reader;
     Stage window;
 
     public static void main(String args[]) {
         launch(args);
+    }
+
+    // définition d'un objet "runnable" qui pourra être exécuté
+    // par le UI Thread
+    class changerCouleur implements Runnable {
+        @Override
+        public void run() {
+            if (bleu) {
+                c2.setFill(Color.YELLOW);
+                bleu = false;
+            } else {
+                c2.setFill(Color.BLUE);
+                bleu = true;
+            }
+        }
+    }
+    //Tâche sans fin
+    class TacheParallele implements Runnable {
+        public void run() {
+            while (true) {
+                // demande au UI Thread d'exécuter ce bout de code
+                Platform.runLater(() -> c1.setFill(Color.GREEN));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {}
+
+                // demande au UI Thread d'exécuter ce bout de code
+                Platform.runLater(() -> c1.setFill(Color.RED));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {}
+            }
+        }
+    }
+
+    public void gererClic(MouseEvent e) {
+        int x = (int)e.getX();
+        int y = (int)e.getY();
+        System.out.println("Position de la sourisw: " + x + ", " + y);
+
+        // demande au UI Thread d'exécuter ce bout de code
+        Platform.runLater(new changerCouleur());
     }
 
     @Override
@@ -44,7 +93,8 @@ public class Main extends Application {
         socClient.connect(adrServeur);
         System.out.println("Client connecte.");
 
-        String info = null;
+        ArrayList<String> coords = new ArrayList<String>();
+        ArrayList<String> links = new ArrayList<String>();
         //Lit les information envoyer par le serveur (Info carte)
         reader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
 
@@ -54,11 +104,25 @@ public class Main extends Application {
         //TODO prendre les informations pour afficher la carte plutot que d'afficher les valeurs dans la console.
         //Ceci doit etre dans un thread separe qui gere l'interface usage.
         System.out.println("Information pour afficher la carte: ");
-        while (!fini) {
-            info = reader.readLine();
 
-            if (info != null) {
-                System.out.println(info);
+        Boolean bLinks = false;
+
+        //Fill arays avec les informations de la carte
+        while (!fini) {
+
+            String line = reader.readLine();
+            if (!bLinks) {
+                coords.add(line);
+                if (line.equals("")){
+                    bLinks = true;
+                }
+            }
+            else if (bLinks) links.add(line);
+
+            if (line != null) {
+                System.out.println(line);
+            } else if (line != null){
+                System.out.println(line);
             } else {
                 fini = true;
             }
@@ -106,7 +170,18 @@ public class Main extends Application {
     private void logIn(TextField userNameTextField, TextField passwordTextField)
     {
         Group groupe = new Group();
-        Scene gameScene = new Scene(groupe,1280,720);
+        Scene gameScene = new Scene(groupe,1600,900);
+
+        // assignation d'un gestionaire de clic
+        window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
+        window.show();
+
+        // création d'une tâche parallèle pour ne pas geler le UI Thread
+        Thread t = new Thread(new TacheParallele());
+        // un thread "démon" s'arrêtera avec la fermeture de la fenêtre
+        t.setDaemon(true);
+        t.start();
+
         window.setScene(gameScene);
         window.show();
 
