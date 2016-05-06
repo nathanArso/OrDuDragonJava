@@ -7,6 +7,8 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -43,7 +45,7 @@ public class Main extends Application {
         launch(args);
     }
 
-    // définition d'un objet "runnable" qui pourra être exécuté
+    // dï¿½finition d'un objet "runnable" qui pourra ï¿½tre exï¿½cutï¿½
     // par le UI Thread
     class changerCouleur implements Runnable {
         @Override
@@ -51,19 +53,19 @@ public class Main extends Application {
             //TODO what happens when you click somewhere on map
         }
     }
-    //Tâche sans fin
+    //Tï¿½che sans fin
     class TacheParallele implements Runnable {
         public void run() {
             while (true) {
                 //TODO what happens every second (Refresh)
                 /*
-                // demande au UI Thread d'exécuter ce bout de code
+                // demande au UI Thread d'exï¿½cuter ce bout de code
                 Platform.runLater(() -> c1.setFill(Color.GREEN));
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {}
 
-                // demande au UI Thread d'exécuter ce bout de code
+                // demande au UI Thread d'exï¿½cuter ce bout de code
                 Platform.runLater(() -> c1.setFill(Color.RED));
                 try {
                     Thread.sleep(1000);
@@ -77,7 +79,7 @@ public class Main extends Application {
         int y = (int)e.getY();
         System.out.println("Position de la souris: " + x + ", " + y);
 
-        // demande au UI Thread d'exécuter ce bout de code
+        // demande au UI Thread d'exï¿½cuter ce bout de code
         Platform.runLater(new changerCouleur());
     }
 
@@ -183,9 +185,9 @@ public class Main extends Application {
         window.show();
 
         groupe = initializeMap(groupe);
-        // création d'une tâche parallèle pour ne pas geler le UI Thread
+        // crï¿½ation d'une tï¿½che parallï¿½le pour ne pas geler le UI Thread
         Thread t = new Thread(new TacheParallele());
-        // un thread "démon" s'arrêtera avec la fermeture de la fenêtre
+        // un thread "dï¿½mon" s'arrï¿½tera avec la fermeture de la fenï¿½tre
         t.setDaemon(true);
         t.start();
 
@@ -198,8 +200,10 @@ public class Main extends Application {
 
         ArrayList<Circle> circles = new ArrayList<Circle>();
 
-        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, circles);
-        //for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, lines);
+        groupe.getChildren().add(new ImageView(new Image("carte.png"))); //Ajouter carte arriere plan
+
+        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, circles); //Genere les noeud
+        for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, circles); //Genere les liaison.
 
         return groupe;
     }
@@ -219,8 +223,31 @@ public class Main extends Application {
             currentCircle = circles.get(index);
             currentCircle.setStroke(Color.BLACK);
             currentCircle.setFill(Color.RED);
-            currentCircle.setStrokeWidth(index);
+            currentCircle.setStrokeWidth(5);
             groupe.getChildren().add(currentCircle);
+        }
+
+    }
+
+    private void generateLine(Group groupe, int index, ArrayList<Circle> circles){
+
+        if (links.get(index) != null)
+        {
+            String info[] = links.get(index).split(" ");
+
+            for (int i = 1; i < info.length; ++i){
+                double startX = circles.get(index).getCenterX();
+                double startY = circles.get(index).getCenterY();
+                double endX = circles.get(Integer.parseInt(info[i])).getCenterX();
+                double endY = circles.get(Integer.parseInt(info[i])).getCenterY();
+
+                Line currentLine = new Line(startX, startY, endX, endY);
+                currentLine.setStroke(Color.RED);
+                currentLine.setStrokeWidth(1);
+                groupe.getChildren().add(currentLine);
+            }
+
+            ;
         }
 
     }
