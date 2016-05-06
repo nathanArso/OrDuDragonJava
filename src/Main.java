@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.Group;
@@ -10,36 +9,40 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import javafx.scene.input.MouseEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Main extends Application {
-    public static final int PORT = 51005;
-    public static final String serverIP = "149.56.47.97";
-    private InetSocketAddress adrServeur;
+    public static final int PORT_MAP = 51005;
+    public static final int PORT_POS = 51006;
+    public static final int DELAI = 1000;
+    public static final String ServerIP = "149.56.47.97";
+    private InetSocketAddress adrMapServer;
+    private InetSocketAddress adrPosServer;
     private ServerSocket socServer;
     private Socket socClient;
+    private Socket socClientPos;
 
-    private BufferedReader reader;
+    private BufferedReader mapReader;
+    private BufferedReader posReader;
+    private PrintWriter posWriter;
     Stage window;
 
     ArrayList<String> coords = new ArrayList<String>();
     ArrayList<String> links = new ArrayList<String>();
+
+    ArrayList<String> positions = new ArrayList<String>();
 
     public static void main(String args[]) {
         launch(args);
@@ -53,45 +56,58 @@ public class Main extends Application {
             //TODO what happens when you click somewhere on map
         }
     }
-    //T�che sans fin
+
+    //Tache sans fin
     class TacheParallele implements Runnable {
         public void run() {
-            while (true) {
-                //TODO what happens every second (Refresh)
-                /*
-                // demande au UI Thread d'ex�cuter ce bout de code
-                Platform.runLater(() -> c1.setFill(Color.GREEN));
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ie) {}
+            String line = null;
 
-                // demande au UI Thread d'ex�cuter ce bout de code
-                Platform.runLater(() -> c1.setFill(Color.RED));
+            while (true) {
+                //What happens every second (Refresh)
+                try {
+                    posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
+                    posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
+
+                    line = posReader.readLine();
+
+                    if (!line.equals("")) {
+                        positions.add(line);
+                        System.out.println(line);
+                    }
+                } catch (IOException ioe) {
+                    System.out.println("Erreur: " + ioe);
+                }
+
+                // demande au UI Thread d'executer ce bout de code
+                Platform.runLater(() -> posWriter.write("")); //Envoye une ligne pour idniquer que nous sommes vivant
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException ie) {} */
+                } catch (InterruptedException ie) {
+                }
             }
         }
     }
 
     public void gererClic(MouseEvent e) {
-        int x = (int)e.getX();
-        int y = (int)e.getY();
+        int x = (int) e.getX();
+        int y = (int) e.getY();
         System.out.println("Position de la souris: " + x + ", " + y);
 
-        // demande au UI Thread d'ex�cuter ce bout de code
+        // demande au UI Thread d'executer ce bout de code
         Platform.runLater(new changerCouleur());
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        adrServeur = new InetSocketAddress(serverIP, PORT);
-        socServer = new ServerSocket(PORT);
+        adrMapServer = new InetSocketAddress(ServerIP, PORT_MAP);
+        socServer = new ServerSocket(PORT_MAP);
         socClient = new Socket();
-        socClient.connect(adrServeur);
+        socClient.connect(adrMapServer);
         System.out.println("Client connecte.");
 
-        keepServerInfo(socClient);
+        adrPosServer = new InetSocketAddress(ServerIP, PORT_POS);
+
+        keepMapServerInfo();
 
         window = primaryStage;
 
@@ -131,16 +147,14 @@ public class Main extends Application {
         window.show();
     }
 
-    private void keepServerInfo(Socket socClient){
+    private void keepMapServerInfo() {
         try {
             //Lit les information envoyer par le serveur (Info carte)
-            reader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+            mapReader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
 
             Boolean fini = false;
 
-            //Affiche info pour la carte dans la console.
-            //TODO prendre les informations pour afficher la carte plutot que d'afficher les valeurs dans la console.
-            //Ceci doit etre dans un thread separe qui gere l'interface usage.
+            //TODO Ceci doit etre dans un thread separe qui gere l'interface usage.
             System.out.println("Information pour afficher la carte: ");
 
             Boolean bLinks = false;
@@ -148,46 +162,54 @@ public class Main extends Application {
             //Fill arays avec les informations de la carte
             while (!fini) {
 
-                String line = reader.readLine();
+                String line = mapReader.readLine();
 
                 if (!bLinks) {
                     coords.add(line);
-                    if (line.equals("")){
+                    if (line.equals("")) {
                         bLinks = true;
                     }
-                }
-                else if (bLinks) links.add(line);
+                } else if (bLinks) links.add(line);
 
                 if (line != null) {
                     System.out.println(line);
-                } else if (line != null){
+                } else if (line != null) {
                     System.out.println(line);
                 } else {
                     fini = true;
                 }
             }
 
-            reader.close();
-        } catch(IOException io)
-        {
+            mapReader.close();
+        } catch (IOException io) {
             System.err.println("Erreur dans la lecture de la carte: " + io.getMessage());
         }
 
     }
+
     // Event clieck on connexion button
-    private void logIn(TextField userNameTextField, TextField passwordTextField)
-    {
+    private void logIn(TextField userNameTextField, TextField passwordTextField) {
+
         Group groupe = new Group();
-        Scene gameScene = new Scene(groupe,1600,900);
+        Scene gameScene = new Scene(groupe, 1600, 900);
 
         // assignation d'un gestionaire de clic
         window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
         window.show();
 
         groupe = initializeMap(groupe);
-        // cr�ation d'une t�che parall�le pour ne pas geler le UI Thread
+
+        try {
+            socClientPos = new Socket();
+            socClientPos.connect(adrPosServer);
+        } catch (IOException io) {
+            System.err.println("Erreur création socket position: " + io.getMessage());
+        }
+
+
+        // creation d'une tache parallele pour ne pas geler le UI Thread
         Thread t = new Thread(new TacheParallele());
-        // un thread "d�mon" s'arr�tera avec la fermeture de la fen�tre
+        // un thread "daemon" s'arretera avec la fermeture de la fenetre
         t.setDaemon(true);
         t.start();
 
@@ -198,56 +220,53 @@ public class Main extends Application {
 
     private Group initializeMap(Group groupe) {
 
-        ArrayList<Circle> circles = new ArrayList<Circle>();
+        ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
 
         groupe.getChildren().add(new ImageView(new Image("carte.png"))); //Ajouter carte arriere plan
 
-        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, circles); //Genere les noeud
-        for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, circles); //Genere les liaison.
+        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, noeuds); //Genere les noeud
+        for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, noeuds); //Genere les liaison.
 
         return groupe;
     }
 
-    private void generateCircle(Group groupe, int index, ArrayList<Circle> circles){
-        final int CIRCLE_RADIUS = 20;
+    private void generateCircle(Group groupe, int index, ArrayList<Noeud> noeuds) {
+        final int CIRCLE_RADIUS = 10;
 
-        if (!coords.get(index).equals(""))
-        {
-            Circle currentCircle = new Circle();
+        if (!coords.get(index).equals("")) {
+            Noeud currentCircle = new Noeud();
 
             String info[] = coords.get(index).split(" ");
             int x = Integer.parseInt(info[1]);
             int y = Integer.parseInt(info[2]);
 
-            circles.add(new Circle(x, y, CIRCLE_RADIUS));
-            currentCircle = circles.get(index);
+            noeuds.add(new Noeud(x, y, CIRCLE_RADIUS));
+            currentCircle = noeuds.get(index);
             currentCircle.setStroke(Color.BLACK);
             currentCircle.setFill(Color.RED);
-            currentCircle.setStrokeWidth(5);
+            currentCircle.setStrokeWidth(2);
             groupe.getChildren().add(currentCircle);
         }
 
     }
 
-    private void generateLine(Group groupe, int index, ArrayList<Circle> circles){
+    private void generateLine(Group groupe, int index, ArrayList<Noeud> noeuds) {
 
-        if (links.get(index) != null)
-        {
+        if (links.get(index) != null) {
             String info[] = links.get(index).split(" ");
 
-            for (int i = 1; i < info.length; ++i){
-                double startX = circles.get(index).getCenterX();
-                double startY = circles.get(index).getCenterY();
-                double endX = circles.get(Integer.parseInt(info[i])).getCenterX();
-                double endY = circles.get(Integer.parseInt(info[i])).getCenterY();
+            for (int i = 1; i < info.length; ++i) {
+                double startX = noeuds.get(index).getCenterX();
+                double startY = noeuds.get(index).getCenterY();
+                double endX = noeuds.get(Integer.parseInt(info[i])).getCenterX();
+                double endY = noeuds.get(Integer.parseInt(info[i])).getCenterY();
 
-                Line currentLine = new Line(startX, startY, endX, endY);
+                Chemin currentLine = new Chemin(startX, startY, endX, endY);
                 currentLine.setStroke(Color.RED);
                 currentLine.setStrokeWidth(1);
                 groupe.getChildren().add(currentLine);
             }
 
-            ;
         }
 
     }
