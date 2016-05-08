@@ -242,8 +242,8 @@ public class Main extends Application {
 
             noeuds.add(new Noeud(x, y, CIRCLE_RADIUS));
             currentCircle = noeuds.get(index);
-            currentCircle.setStroke(Color.BLACK);
-            currentCircle.setFill(Color.RED);
+            currentCircle.setStroke(Color.AZURE);
+            currentCircle.setFill(Color.BLACK);
             currentCircle.setStrokeWidth(2);
             groupe.getChildren().add(currentCircle);
         }
@@ -262,7 +262,7 @@ public class Main extends Application {
                 double endY = noeuds.get(Integer.parseInt(info[i])).getCenterY();
 
                 Chemin currentLine = new Chemin(startX, startY, endX, endY);
-                currentLine.setStroke(Color.RED);
+                currentLine.setStroke(Color.BLACK);
                 currentLine.setStrokeWidth(1);
                 groupe.getChildren().add(currentLine);
             }
