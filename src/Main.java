@@ -27,10 +27,12 @@ import java.util.ArrayList;
 public class Main extends Application {
     public static final int PORT_MAP = 51005;
     public static final int PORT_POS = 51006;
+    public static final int PORT_GAME = 51007;
     public static final int DELAI = 1000;
     public static final String ServerIP = "149.56.47.97";
     private InetSocketAddress adrMapServer;
     private InetSocketAddress adrPosServer;
+    private InetSocketAddress adrGameServer;
     private ServerSocket socServer;
     private Socket socClient;
     private Socket socClientPos;
@@ -158,6 +160,7 @@ public class Main extends Application {
         System.out.println("Client connecte.");
 
         adrPosServer = new InetSocketAddress(ServerIP, PORT_POS);
+        adrGameServer = new InetSocketAddress(ServerIP, PORT_GAME);
 
         keepMapServerInfo();
 
