@@ -1,3 +1,4 @@
+import com.sun.xml.internal.fastinfoset.util.CharArray;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -33,6 +34,9 @@ public class Main extends Application {
     private ServerSocket socServer;
     private Socket socClient;
     private Socket socClientPos;
+
+    private ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
+    private Group groupe = new Group();
 
     private BufferedReader mapReader;
     private BufferedReader posReader;
@@ -73,6 +77,8 @@ public class Main extends Application {
                     if (!line.equals("")) {
                         positions.add(line);
                         System.out.println(line);
+
+                        refreshMap(line);
                     }
                 } catch (IOException ioe) {
                     System.out.println("Erreur: " + ioe);
@@ -84,6 +90,52 @@ public class Main extends Application {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {
                 }
+            }
+        }
+    }
+
+    private void refreshMap(String line){
+        for (int i = 0; i < noeuds.size(); ++i) noeuds.get(i).setFill(Color.BLACK); //set color back to black
+
+        String combs[] = line.split(" ");
+
+        for (int i = 0; i < combs.length; ++i){
+            String comb[] = combs[i].split(":");
+
+            switch(comb[1]){
+                case "J":
+                    //Gérer le joueur.
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
+                    break;
+                case "T":
+                    //Gérer le troll
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GREEN);
+                    break;
+                case "G":
+                    //Gérer Gobelin
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
+                    break;
+                case "P":
+                    //Gérer pièce d'or
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GOLD);
+                    break;
+                case "M":
+                    //Gérer Mountain Dew
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
+                    break;
+                case "D":
+                    //Gerer Doritos
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.ORANGE);
+                    break;
+                case "A":
+                    //Gerer auberges
+                    break;
+                case "N":
+                    //Gerer manoir
+                    break;
+                case "C":
+                    //Gerer chateau
+                    break;
             }
         }
     }
@@ -190,14 +242,13 @@ public class Main extends Application {
     // Event clieck on connexion button
     private void logIn(TextField userNameTextField, TextField passwordTextField) {
 
-        Group groupe = new Group();
         Scene gameScene = new Scene(groupe, 1600, 900);
 
         // assignation d'un gestionaire de clic
         window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
         window.show();
 
-        groupe = initializeMap(groupe);
+        initializeMap();
 
         try {
             socClientPos = new Socket();
@@ -218,19 +269,17 @@ public class Main extends Application {
 
     }
 
-    private Group initializeMap(Group groupe) {
-
-        ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
+    private Group initializeMap() {
 
         groupe.getChildren().add(new ImageView(new Image("carte.png"))); //Ajouter carte arriere plan
 
-        for (int i = 0; i < coords.size(); ++i) generateCircle(groupe, i, noeuds); //Genere les noeud
-        for (int i = 0; i < links.size(); ++i) generateLine(groupe, i, noeuds); //Genere les liaison.
+        for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
+        for (int i = 0; i < links.size(); ++i) generateLine(i); //Genere les liaison.
 
         return groupe;
     }
 
-    private void generateCircle(Group groupe, int index, ArrayList<Noeud> noeuds) {
+    private void generateCircle(int index) {
         final int CIRCLE_RADIUS = 10;
 
         if (!coords.get(index).equals("")) {
@@ -250,7 +299,7 @@ public class Main extends Application {
 
     }
 
-    private void generateLine(Group groupe, int index, ArrayList<Noeud> noeuds) {
+    private void generateLine(int index) {
 
         if (links.get(index) != null) {
             String info[] = links.get(index).split(" ");
