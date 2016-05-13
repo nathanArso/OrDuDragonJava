@@ -2,6 +2,7 @@ import com.sun.xml.internal.fastinfoset.util.CharArray;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -18,10 +19,7 @@ import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -36,6 +34,7 @@ public class Main extends Application {
     private ServerSocket socServer;
     private Socket socClient;
     private Socket socClientPos;
+    private Socket socClientGame;
 
     private ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
     private Group groupe = new Group();
@@ -59,7 +58,22 @@ public class Main extends Application {
     class changerCouleur implements Runnable {
         @Override
         public void run() {
-            //TODO what happens when you click somewhere on map
+            try {
+                //TODO this is only to test
+                DataOutputStream os = new DataOutputStream(socClientGame.getOutputStream());
+                DataInputStream is = new DataInputStream(socClientGame.getInputStream());
+
+                os.writeBytes("HELLO Doge\n");
+                os.writeBytes("GOTO 1\n");
+
+                System.out.println("Hi Doge.");
+
+            }catch (UnknownHostException e){
+                System.err.println("Hote introuvable.");
+            }catch (IOException e){
+                System.err.println("Erreur du socket de jeu.");
+            }
+
         }
     }
 
@@ -111,11 +125,11 @@ public class Main extends Application {
                     break;
                 case "T":
                     //Gérer le troll
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GREEN);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
                     break;
                 case "G":
                     //Gérer Gobelin
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.DARKRED);
                     break;
                 case "P":
                     //Gérer pièce d'or
@@ -123,7 +137,7 @@ public class Main extends Application {
                     break;
                 case "M":
                     //Gérer Mountain Dew
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
                     break;
                 case "D":
                     //Gerer Doritos
@@ -256,6 +270,8 @@ public class Main extends Application {
         try {
             socClientPos = new Socket();
             socClientPos.connect(adrPosServer);
+            socClientGame = new Socket();
+            socClientGame.connect(adrGameServer);
         } catch (IOException io) {
             System.err.println("Erreur création socket position: " + io.getMessage());
         }
