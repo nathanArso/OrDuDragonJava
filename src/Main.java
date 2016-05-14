@@ -1,8 +1,6 @@
-import com.sun.xml.internal.fastinfoset.util.CharArray;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -49,22 +47,24 @@ public class Main extends Application {
 
     ArrayList<String> positions = new ArrayList<String>();
 
+    DataOutputStream PDFos;
+
     public static void main(String args[]) {
         launch(args);
     }
 
-    // d�finition d'un objet "runnable" qui pourra �tre ex�cut�
+    // definition d'un objet "runnable" qui pourra etre execute
     // par le UI Thread
     class changerCouleur implements Runnable {
         @Override
         public void run() {
             try {
                 //TODO this is only to test
-                DataOutputStream os = new DataOutputStream(socClientGame.getOutputStream());
+                PDFos = new DataOutputStream(socClientGame.getOutputStream());
                 DataInputStream is = new DataInputStream(socClientGame.getInputStream());
 
-                os.writeBytes("HELLO Doge\n");
-                os.writeBytes("GOTO 1\n");
+                PDFos.writeBytes("HELLO Doge\n");
+                PDFos.writeBytes("GOTO 12\n");
 
                 System.out.println("Hi Doge.");
 
@@ -85,6 +85,9 @@ public class Main extends Application {
             while (true) {
                 //What happens every second (Refresh)
                 try {
+                    PDFos = new DataOutputStream(socClientGame.getOutputStream());
+                    PDFos.writeBytes("NOOP\n"); //Indique au serveur quon est toujours la
+
                     posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
                     posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
 
@@ -284,6 +287,7 @@ public class Main extends Application {
         t.start();
 
         window.setScene(gameScene);
+        window.setFullScreen(true);
         window.show();
 
     }
