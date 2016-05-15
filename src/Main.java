@@ -21,6 +21,7 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Main extends Application {
+    public static final int CIRCLE_RADIUS = 10;
     public static final int PORT_MAP = 51005;
     public static final int PORT_POS = 51006;
     public static final int PORT_GAME = 51007;
@@ -48,6 +49,10 @@ public class Main extends Application {
     ArrayList<String> positions = new ArrayList<String>();
 
     DataOutputStream PDFos;
+    DataInputStream PDFis;
+
+    public Noeud selectedNoeud;
+    public int selectedID;
 
     public static void main(String args[]) {
         launch(args);
@@ -55,18 +60,19 @@ public class Main extends Application {
 
     // definition d'un objet "runnable" qui pourra etre execute
     // par le UI Thread
-    class changerCouleur implements Runnable {
+    class deplacer implements Runnable {
         @Override
         public void run() {
             try {
-                //TODO this is only to test
+                //TODO to complete
                 PDFos = new DataOutputStream(socClientGame.getOutputStream());
-                DataInputStream is = new DataInputStream(socClientGame.getInputStream());
+                PDFis = new DataInputStream(socClientGame.getInputStream());
 
                 PDFos.writeBytes("HELLO Doge\n");
-                PDFos.writeBytes("GOTO 12\n");
+                PDFos.writeBytes("GOTO " + selectedID + "\n");
+                //if (PDFis.readUTF().equals("ERR")) System.out.println("Impossible de se déplacer a ce noeud.");
 
-                System.out.println("Hi Doge.");
+                System.out.println("Deplacement au noeud " + selectedID);
 
             }catch (UnknownHostException e){
                 System.err.println("Hote introuvable.");
@@ -164,8 +170,15 @@ public class Main extends Application {
         int y = (int) e.getY();
         System.out.println("Position de la souris: " + x + ", " + y);
 
+        for (int i = 0; i < noeuds.size(); i++){
+            if (noeuds.get(i).x < x + CIRCLE_RADIUS && noeuds.get(i).x > x - CIRCLE_RADIUS && noeuds.get(i).y < y + CIRCLE_RADIUS && noeuds.get(i).y > y - CIRCLE_RADIUS ){
+                selectedID = i;
+                selectedNoeud = noeuds.get(i);
+                Platform.runLater(new deplacer());
+            }
+        }
         // demande au UI Thread d'executer ce bout de code
-        Platform.runLater(new changerCouleur());
+
     }
 
     @Override
@@ -287,7 +300,6 @@ public class Main extends Application {
         t.start();
 
         window.setScene(gameScene);
-        window.setFullScreen(true);
         window.show();
 
     }
@@ -303,7 +315,6 @@ public class Main extends Application {
     }
 
     private void generateCircle(int index) {
-        final int CIRCLE_RADIUS = 10;
 
         if (!coords.get(index).equals("")) {
             Noeud currentCircle = new Noeud();
