@@ -154,12 +154,15 @@ public class Main extends Application {
                     break;
                 case "A":
                     //Gerer auberges
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
                     break;
                 case "N":
                     //Gerer manoir
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
                     break;
                 case "C":
                     //Gerer chateau
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
                     break;
             }
         }
@@ -323,6 +326,19 @@ public class Main extends Application {
 
         groupe.getChildren().add(quitButton);
 
+        Button buildButton = new Button("Build");
+        buildButton.setLayoutX(100);
+        buildButton.setLayoutY(10);
+
+        buildButton.setOnAction(e -> {
+            try {
+                PDFos.writeBytes("BUILD\n");
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        groupe.getChildren().add(buildButton);
         for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
         for (int i = 0; i < links.size(); ++i) generateLine(i); //Genere les liaison.
 
