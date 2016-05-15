@@ -308,11 +308,27 @@ public class Main extends Application {
 
         groupe.getChildren().add(new ImageView(new Image("carte.png"))); //Ajouter carte arriere plan
 
+        Button quitButton = new Button("Quitter");
+        quitButton.setLayoutX(10);
+        quitButton.setLayoutY(10);
+
+            quitButton.setOnAction(e -> {
+                try {
+                    PDFos.writeBytes("QUIT\n");
+                    window.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            });
+
+        groupe.getChildren().add(quitButton);
+
         for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
         for (int i = 0; i < links.size(); ++i) generateLine(i); //Genere les liaison.
 
         return groupe;
     }
+
 
     private void generateCircle(int index) {
 
