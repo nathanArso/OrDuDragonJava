@@ -1,6 +1,13 @@
 # OrDuDragonJava
 #### Application Java du jeu Or Du Dragon.
 
+##TODO
+Gérer les interaction avec la prison.
+Gérer les interactions avec les contructions.
+Gérer les interactions avec les questions et réponses.
+Ajouter les bouton nécessaire.
+Afficher les informations sur un noeuds.
+
 ##Oracle BD: 
 Username: ATTG
 
