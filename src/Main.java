@@ -54,6 +54,10 @@ public class Main extends Application {
     public Noeud selectedNoeud;
     public int selectedID;
 
+    public int or = 0;
+    public int MountainDew = 0;
+    public int Doritos = 0;
+
     public static void main(String args[]) {
         launch(args);
     }
@@ -66,15 +70,20 @@ public class Main extends Application {
             try {
                 //TODO to complete
                 PDFos = new DataOutputStream(socClientGame.getOutputStream());
-                PDFis = new DataInputStream(socClientGame.getInputStream());
+                posReader = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
 
                 PDFos.writeBytes("GOTO " + selectedID + "\n");
+                //TEMP
+                String line = posReader.readLine();
+                if (line.equals("P")) ++or;
+                else if (line.equals("M")) ++MountainDew;
+                else if(line.equals("D")) ++Doritos;
 
                 System.out.println("Deplacement au noeud " + selectedID);
 
-            }catch (UnknownHostException e){
+            } catch (UnknownHostException e) {
                 System.err.println("Hote introuvable.");
-            }catch (IOException e){
+            } catch (IOException e) {
                 System.err.println("Erreur du socket de jeu.");
             }
 
@@ -117,15 +126,15 @@ public class Main extends Application {
         }
     }
 
-    private void refreshMap(String line){
+    private void refreshMap(String line) {
         for (int i = 0; i < noeuds.size(); ++i) noeuds.get(i).setFill(Color.BLACK); //set color back to black
 
         String combs[] = line.split(" ");
 
-        for (int i = 0; i < combs.length; ++i){
+        for (int i = 0; i < combs.length; ++i) {
             String comb[] = combs[i].split(":");
 
-            switch(comb[1]){
+            switch (comb[1]) {
                 case "J":
                     //Gérer le joueur.
                     noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
@@ -171,8 +180,8 @@ public class Main extends Application {
         int y = (int) e.getY();
         System.out.println("Position de la souris: " + x + ", " + y);
 
-        for (int i = 0; i < noeuds.size(); i++){
-            if (noeuds.get(i).x < x + CIRCLE_RADIUS && noeuds.get(i).x > x - CIRCLE_RADIUS && noeuds.get(i).y < y + CIRCLE_RADIUS && noeuds.get(i).y > y - CIRCLE_RADIUS ){
+        for (int i = 0; i < noeuds.size(); i++) {
+            if (noeuds.get(i).x < x + CIRCLE_RADIUS && noeuds.get(i).x > x - CIRCLE_RADIUS && noeuds.get(i).y < y + CIRCLE_RADIUS && noeuds.get(i).y > y - CIRCLE_RADIUS) {
                 selectedID = i;
                 selectedNoeud = noeuds.get(i);
                 Platform.runLater(new deplacer());
@@ -292,7 +301,7 @@ public class Main extends Application {
         try {
             PDFos = new DataOutputStream(socClientGame.getOutputStream());
             PDFos.writeBytes("HELLO zATTG\n");
-        } catch(IOException io){
+        } catch (IOException io) {
             System.err.println(io.getMessage());
         }
 
@@ -315,28 +324,20 @@ public class Main extends Application {
         quitButton.setLayoutX(10);
         quitButton.setLayoutY(10);
 
-            quitButton.setOnAction(e -> {
-                try {
-                    PDFos.writeBytes("QUIT\n");
-                    window.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            });
-
-        groupe.getChildren().add(quitButton);
-
-        Button buildButton = new Button("Build");
-        buildButton.setLayoutX(100);
-        buildButton.setLayoutY(10);
-
-        buildButton.setOnAction(e -> {
+        quitButton.setOnAction(e -> {
             try {
-                PDFos.writeBytes("BUILD\n");
+                PDFos.writeBytes("QUIT\n");
+                window.close();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         });
+
+        groupe.getChildren().add(quitButton);
+
+        Button buildButton = new Button("Build");
+
+        Build(buildButton);
 
         groupe.getChildren().add(buildButton);
         for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
@@ -345,6 +346,27 @@ public class Main extends Application {
         return groupe;
     }
 
+    private void Build(Button buildButton) {
+      /*  try {
+
+        }catch (IOException io) {
+            System.err.println(io.getMessage());
+        }*/
+
+        buildButton.setLayoutX(100);
+        buildButton.setLayoutY(10);
+
+        buildButton.setOnAction(e -> {
+            try {
+                PDFos.writeBytes("BUILD\n");
+                posReader = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+                System.out.println(posReader.readLine());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+    }
 
     private void generateCircle(int index) {
 
