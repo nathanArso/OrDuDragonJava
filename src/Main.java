@@ -68,9 +68,7 @@ public class Main extends Application {
                 PDFos = new DataOutputStream(socClientGame.getOutputStream());
                 PDFis = new DataInputStream(socClientGame.getInputStream());
 
-                PDFos.writeBytes("HELLO Doge\n");
                 PDFos.writeBytes("GOTO " + selectedID + "\n");
-                //if (PDFis.readUTF().equals("ERR")) System.out.println("Impossible de se déplacer a ce noeud.");
 
                 System.out.println("Deplacement au noeud " + selectedID);
 
@@ -154,7 +152,7 @@ public class Main extends Application {
                     break;
                 case "A":
                     //Gerer auberges
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.MEDIUMPURPLE);
                     break;
                 case "N":
                     //Gerer manoir
@@ -162,7 +160,7 @@ public class Main extends Application {
                     break;
                 case "C":
                     //Gerer chateau
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUEVIOLET);
                     break;
             }
         }
@@ -180,12 +178,11 @@ public class Main extends Application {
                 Platform.runLater(new deplacer());
             }
         }
-        // demande au UI Thread d'executer ce bout de code
-
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         adrMapServer = new InetSocketAddress(ServerIP, PORT_MAP);
         socServer = new ServerSocket(PORT_MAP);
         socClient = new Socket();
@@ -242,9 +239,6 @@ public class Main extends Application {
 
             Boolean fini = false;
 
-            //TODO Ceci doit etre dans un thread separe qui gere l'interface usage.
-            System.out.println("Information pour afficher la carte: ");
-
             Boolean bLinks = false;
 
             //Fill arays avec les informations de la carte
@@ -295,6 +289,12 @@ public class Main extends Application {
             System.err.println("Erreur création socket position: " + io.getMessage());
         }
 
+        try {
+            PDFos = new DataOutputStream(socClientGame.getOutputStream());
+            PDFos.writeBytes("HELLO zATTG\n");
+        } catch(IOException io){
+            System.err.println(io.getMessage());
+        }
 
         // creation d'une tache parallele pour ne pas geler le UI Thread
         Thread t = new Thread(new TacheParallele());
@@ -309,7 +309,7 @@ public class Main extends Application {
 
     private Group initializeMap() {
 
-        groupe.getChildren().add(new ImageView(new Image("carte.png"))); //Ajouter carte arriere plan
+        groupe.getChildren().add(new ImageView(new Image("http://prog101.com/travaux/dragon/images/nowhereland.png"))); //Ajouter carte arriere plan
 
         Button quitButton = new Button("Quitter");
         quitButton.setLayoutX(10);
