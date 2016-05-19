@@ -13,11 +13,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.sql.*;
+import oracle.jdbc.*;
+import oracle.jdbc.pool.*;
 
 import javafx.scene.input.MouseEvent;
 
 import java.io.*;
 import java.net.*;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -25,7 +29,6 @@ public class Main extends Application {
     public static final int PORT_MAP = 51005;
     public static final int PORT_POS = 51006;
     public static final int PORT_GAME = 51007;
-    public static final int DELAI = 1000;
     public static final String ServerIP = "149.56.47.97";
     private InetSocketAddress adrMapServer;
     private InetSocketAddress adrPosServer;
@@ -68,6 +71,8 @@ public class Main extends Application {
     boolean trollPrison = false;
     boolean goblinPrison = false;
 
+    Connection conn = null;
+
     public static void main(String args[]) {
         launch(args);
     }
@@ -90,17 +95,17 @@ public class Main extends Application {
                     if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
                     System.out.println(linePDF);
                     if (linePDF.contains("P")) {
-                        ++or;
-                        orLabel.setText("Or: " + or);
-                        System.out.println("Or: " + Integer.toString(or));
+                        addOr();
                     } else if (linePDF.contains("M")) {
-                        ++MountainDew;
-                        mdLabel.setText("Moutain Dew: " + MountainDew);
-                        System.out.println("Moutain Dews: " + Integer.toString(MountainDew));
+                        addMD();
                     } else if (linePDF.contains("D")) {
-                        ++Doritos;
-                        dLabel.setText("Doritos: " + Doritos);
-                        System.out.println("Doritos: " + Integer.toString(Doritos));
+                        addDoritos();
+                    } else if (linePDF.contains("AUB")) {
+                        addAUB();
+                    } else if (linePDF.contains("MAN")) {
+                        addMAN();
+                    } else if (linePDF.contains("CHA")) {
+                        addCHA();
                     } else if (linePDF.contains("T")) {
                         trollPrison = true;
                         playerFree = false;
@@ -118,6 +123,102 @@ public class Main extends Application {
                 System.err.println("Erreur du socket de jeu.");
             }
 
+        }
+    }
+
+    private void addOr(){
+        try{
+            CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
+            addCapital.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
+        }
+        ++or;
+        orLabel.setText("Or: " + or);
+        System.out.println("Or: " + Integer.toString(or));
+    }
+
+    private void addMD(){
+        try{
+            CallableStatement addMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWPLUS}");
+            addMD.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout de mountain dew dans la BD: " + sqle);
+        }
+        ++MountainDew;
+        mdLabel.setText("Moutain Dew: " + MountainDew);
+        System.out.println("Moutain Dews: " + Integer.toString(MountainDew));
+    }
+
+    private void addDoritos(){
+        try{
+            CallableStatement addD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSPLUS}");
+            addD.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout de doritos dans la BD: " + sqle);
+        }
+        ++Doritos;
+        dLabel.setText("Doritos: " + Doritos);
+        System.out.println("Doritos: " + Integer.toString(Doritos));
+    }
+
+    private void removeOr(){
+        try{
+            CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALMOINS}");
+            addCapital.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
+        }
+        or--;
+        orLabel.setText("Or: " + or);
+    }
+
+    private void removeMD(){
+        try{
+            CallableStatement removeMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWMOINS}");
+            removeMD.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de la reduction de mountain dew dans la BD: " + sqle);
+        }
+        MountainDew--;
+        mdLabel.setText("Mountain Dew: " + MountainDew);
+    }
+
+    private void removeDoritos(){
+        try{
+            CallableStatement removeD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSMOINS}");
+            removeD.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de la reduction des doritos dans la BD: " + sqle);
+        }
+        Doritos--;
+        dLabel.setText("Doritos: " + Doritos);
+    }
+
+    private void addAUB(){
+        try{
+            CallableStatement addAUB = conn.prepareCall("{ call JOUEUR.MISAJOURAUBERGEPLUS}");
+            addAUB.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout d'un auberge dans la BD: " + sqle);
+        }
+    }
+
+    private void addMAN(){
+        try{
+            CallableStatement addMAN = conn.prepareCall("{ call JOUEUR.MISAJOURHOTELPLUS}");
+            addMAN.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout de manoir dans la BD: " + sqle);
+        }
+    }
+
+    private void addCHA(){
+        try{
+            CallableStatement addCHA = conn.prepareCall("{ call JOUEUR.MISAJOURCHATEAUPLUS}");
+            addCHA.executeUpdate();
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout d'un chateau dans la BD: " + sqle);
         }
     }
 
@@ -238,8 +339,10 @@ public class Main extends Application {
         Label titleLabel = new Label("L'or du dragon");
         Label usernameLabel = new Label("Username:");
         TextField userNameTextField = new TextField();
+        userNameTextField.setText("ATTG");
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
+        passwordField.setText("GTTA");
         logInButton.setOnAction(e -> logIn(userNameTextField, passwordField));
 
         //Format page.
@@ -308,6 +411,21 @@ public class Main extends Application {
     // Event clieck on connexion button
     private void logIn(TextField userNameTextField, TextField passwordTextField) {
 
+        String user1 = userNameTextField.getText();
+        String mdep = passwordTextField.getText();
+        String url="jdbc:oracle:thin:@205.237.244.251:1521:orcl";
+
+        try {
+            OracleDataSource ods = new OracleDataSource();
+
+            ods.setURL(url);
+            ods.setUser(user1);
+            ods.setPassword(mdep);
+            conn = ods.getConnection();
+        }catch (SQLException sqle){
+            System.err.println("Erreur dans la connexion: " + sqle.getMessage());
+        }
+
         Scene gameScene = new Scene(groupe, 1600, 900);
 
         // assignation d'un gestionaire de clic
@@ -333,7 +451,7 @@ public class Main extends Application {
         }
 
         try {
-           // PDFos = new DataOutputStream(socClientGame.getOutputStream());
+
             PDFos.writeBytes("HELLO zATTG " + ClientIP + "\n");
         } catch (IOException io) {
             System.err.println(io.getMessage());
@@ -370,8 +488,11 @@ public class Main extends Application {
 
         quitButton.setOnAction(e -> {
             try {
+                conn.close();
                 PDFos.writeBytes("QUIT\n");
                 window.close();
+            } catch (SQLException sqle){
+               System.err.println("Erreur lors de la fermeture de la connection a la BD: " + sqle);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -404,17 +525,15 @@ public class Main extends Application {
         freeButton.setOnAction(e -> {
             try {
                 if (trollPrison && MountainDew > 0){
-                    MountainDew--;
+                    removeMD();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     trollPrison = false;
-                    mdLabel.setText("Mountain Dew: " + MountainDew);
                 } else if (goblinPrison && Doritos > 0){
-                    Doritos--;
+                    removeDoritos();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     trollPrison = false;
-                    dLabel.setText("Doritos: " + Doritos);
                 }
 
             } catch (IOException e1) {
@@ -430,11 +549,10 @@ public class Main extends Application {
         buildButton.setOnAction(e -> {
             try {
                 if (or > 0){
-                    or--;
+                    removeOr();
                     PDFos.writeBytes("BUILD\n");
                     PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
                     System.out.println(PDFis.readLine());
-                    orLabel.setText("Or: " + or);
                 }else {
                     System.out.println("Pas asser d'or pour construire!");
                 }
