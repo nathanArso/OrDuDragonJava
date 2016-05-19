@@ -429,9 +429,15 @@ public class Main extends Application {
 
         buildButton.setOnAction(e -> {
             try {
-                PDFos.writeBytes("BUILD\n");
-                PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
-                System.out.println(PDFis.readLine() + PDFis.readLine());
+                if (or > 0){
+                    or--;
+                    PDFos.writeBytes("BUILD\n");
+                    PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+                    System.out.println(PDFis.readLine());
+                    orLabel.setText("Or: " + or);
+                }else {
+                    System.out.println("Pas asser d'or pour construire!");
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
