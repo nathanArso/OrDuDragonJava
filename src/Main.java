@@ -49,7 +49,7 @@ public class Main extends Application {
     ArrayList<String> positions = new ArrayList<String>();
 
     DataOutputStream PDFos;
-    DataInputStream PDFis;
+    BufferedReader PDFis;
 
     public Noeud selectedNoeud;
     public int selectedID;
@@ -57,6 +57,12 @@ public class Main extends Application {
     public int or = 0;
     public int MountainDew = 0;
     public int Doritos = 0;
+
+    String ClientIP;
+
+    Label orLabel = new Label("Or: 0");
+    Label mdLabel = new Label("Moutain Dew: 0");
+    Label dLabel = new Label("Doritos: 0");
 
     public static void main(String args[]) {
         launch(args);
@@ -69,18 +75,31 @@ public class Main extends Application {
         public void run() {
             try {
                 //TODO to complete
-                PDFos = new DataOutputStream(socClientGame.getOutputStream());
-                posReader = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+               // PDFos = new DataOutputStream(socClientGame.getOutputStream());
 
                 PDFos.writeBytes("GOTO " + selectedID + "\n");
-                //TEMP
-                String line = posReader.readLine();
-                if (line.equals("P")) ++or;
-                else if (line.equals("M")) ++MountainDew;
-                else if(line.equals("D")) ++Doritos;
-
                 System.out.println("Deplacement au noeud " + selectedID);
 
+                String linePDF = PDFis.readLine();
+                linePDF += " " + PDFis.readLine();
+                System.out.println(linePDF);
+                if (linePDF.contains("P")) {
+                    ++or;
+                    orLabel.setText("Or: " + or);
+                    System.out.println("Or: " + Integer.toString(or));
+                } else if (linePDF.contains("M")) {
+                    ++MountainDew;
+                    mdLabel.setText("Moutain Dew: " + MountainDew);
+                    System.out.println("Moutain Dews: " + Integer.toString(MountainDew));
+                } else if (linePDF.contains("D")) {
+                    ++Doritos;
+                    dLabel.setText("Doritos: " + Doritos);
+                    System.out.println("Doritos: " + Integer.toString(Doritos));
+                } else if (linePDF.contains("T")) {
+                    System.out.println("Capture par un troll");
+                } else if (linePDF.contains("G")) {
+                    System.out.println("Capture par un goblin");
+                }
             } catch (UnknownHostException e) {
                 System.err.println("Hote introuvable.");
             } catch (IOException e) {
@@ -98,11 +117,7 @@ public class Main extends Application {
             while (true) {
                 //What happens every second (Refresh)
                 try {
-                    PDFos = new DataOutputStream(socClientGame.getOutputStream());
                     PDFos.writeBytes("NOOP\n"); //Indique au serveur quon est toujours la
-
-                    posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
-                    posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
 
                     line = posReader.readLine();
 
@@ -113,11 +128,9 @@ public class Main extends Application {
                         refreshMap(line);
                     }
                 } catch (IOException ioe) {
+                    //When game ends.
                     System.out.println("Erreur: " + ioe);
                 }
-
-                // demande au UI Thread d'executer ce bout de code
-                Platform.runLater(() -> posWriter.write("")); //Envoye une ligne pour idniquer que nous sommes vivant
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {
@@ -201,6 +214,9 @@ public class Main extends Application {
         adrPosServer = new InetSocketAddress(ServerIP, PORT_POS);
         adrGameServer = new InetSocketAddress(ServerIP, PORT_GAME);
 
+        //Socket socket = socServer.accept();
+
+        //ClientIP = socket.getLocalAddress().getHostAddress();
         keepMapServerInfo();
 
         window = primaryStage;
@@ -294,13 +310,18 @@ public class Main extends Application {
             socClientPos.connect(adrPosServer);
             socClientGame = new Socket();
             socClientGame.connect(adrGameServer);
+
+            PDFos = new DataOutputStream(socClientGame.getOutputStream());
+            PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+            posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
+            posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
         } catch (IOException io) {
             System.err.println("Erreur création socket position: " + io.getMessage());
         }
 
         try {
-            PDFos = new DataOutputStream(socClientGame.getOutputStream());
-            PDFos.writeBytes("HELLO zATTG\n");
+           // PDFos = new DataOutputStream(socClientGame.getOutputStream());
+            PDFos.writeBytes("HELLO zATTG " + ClientIP + "\n");
         } catch (IOException io) {
             System.err.println(io.getMessage());
         }
@@ -318,7 +339,17 @@ public class Main extends Application {
 
     private Group initializeMap() {
 
-        groupe.getChildren().add(new ImageView(new Image("http://prog101.com/travaux/dragon/images/nowhereland.png"))); //Ajouter carte arriere plan
+        orLabel.setLayoutX(1000);
+        orLabel.setLayoutY(820);
+        orLabel.setFont(new Font(30));
+
+        mdLabel.setLayoutX(1120);
+        mdLabel.setLayoutY(820);
+        mdLabel.setFont(new Font(30));
+
+        dLabel.setLayoutX(1400);
+        dLabel.setLayoutY(820);
+        dLabel.setFont(new Font(30));
 
         Button quitButton = new Button("Quitter");
         quitButton.setLayoutX(10);
@@ -333,13 +364,16 @@ public class Main extends Application {
             }
         });
 
-        groupe.getChildren().add(quitButton);
-
         Button buildButton = new Button("Build");
-
         Build(buildButton);
 
+        groupe.getChildren().add(new ImageView(new Image("http://prog101.com/travaux/dragon/images/nowhereland.png"))); //Ajouter carte arriere plan
+        groupe.getChildren().add(quitButton);
         groupe.getChildren().add(buildButton);
+        groupe.getChildren().add(orLabel);
+        groupe.getChildren().add(mdLabel);
+        groupe.getChildren().add(dLabel);
+
         for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
         for (int i = 0; i < links.size(); ++i) generateLine(i); //Genere les liaison.
 
@@ -347,20 +381,13 @@ public class Main extends Application {
     }
 
     private void Build(Button buildButton) {
-      /*  try {
-
-        }catch (IOException io) {
-            System.err.println(io.getMessage());
-        }*/
-
         buildButton.setLayoutX(100);
         buildButton.setLayoutY(10);
 
         buildButton.setOnAction(e -> {
             try {
                 PDFos.writeBytes("BUILD\n");
-                posReader = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
-                System.out.println(posReader.readLine());
+                System.out.println(PDFis.readLine() + PDFis.readLine());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
