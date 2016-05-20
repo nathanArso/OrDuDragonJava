@@ -2,14 +2,12 @@
 #### Application Java du jeu Or Du Dragon.
 
 ##TODO
-1. Modifier les coût de la prison. **20mins**
-2. Modifier les coût des contructions. **20mins**
-3. Gerer les problèmes de readline. **1heure**
-4. Gérer les interactions avec les questions et réponses. **5heures**
-5. Gerer une fin de partie correctement. **15mins**
-6. Afficher les informations sur un noeuds. **1heure**
-7. Bien gerer les exceptions. **30mins**
-8. Restructurer le code. **30mins**
+1. Gerer les problèmes de readline. **1heure**
+2. Gérer les interactions avec les questions et réponses. **5heures**
+3. Gerer une fin de partie correctement. **15mins**
+4. Afficher les informations sur un noeuds. **1heure**
+5. Bien gerer les exceptions. **30mins**
+6. Restructurer le code. **30mins**
 
 ##Oracle BD: 
 Username: ATTG

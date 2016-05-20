@@ -533,7 +533,15 @@ public class Main extends Application {
                     removeDoritos();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
+                    goblinPrison = false;
+                } else if (goblinPrison || trollPrison && or >= 3){
+                    removeOr();
+                    removeOr();
+                    removeOr();
+                    PDFos.writeBytes("FREE\n");
+                    playerFree = true;
                     trollPrison = false;
+                    goblinPrison = false;
                 }
 
             } catch (IOException e1) {
@@ -548,7 +556,9 @@ public class Main extends Application {
 
         buildButton.setOnAction(e -> {
             try {
-                if (or > 0){
+                if (or >= 3){
+                    removeOr();
+                    removeOr();
                     removeOr();
                     PDFos.writeBytes("BUILD\n");
                     PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
