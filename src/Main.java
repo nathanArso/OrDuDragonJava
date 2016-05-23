@@ -56,6 +56,10 @@ public class Main extends Application {
     DataOutputStream PDFos;
     BufferedReader PDFis;
 
+    public int or = 0;
+    public int MD = 0;
+    public int Doritos = 0;
+
     public Noeud selectedNoeud;
     public int selectedID;
 
@@ -90,7 +94,8 @@ public class Main extends Application {
                     System.out.println("Deplacement au noeud " + selectedID);
 
                     String linePDF = PDFis.readLine();
-                    if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
+                    //if(linePDF.equals("OK"))
+                        linePDF += " " + PDFis.readLine();
                     System.out.println(linePDF);
                     if (linePDF.contains("P")) {
                         addOr();
@@ -124,8 +129,7 @@ public class Main extends Application {
         }
     }
 
-    private int getOr(){
-        int or = 0;
+    private void getOr(){
         try{
             CallableStatement getOr = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
             getOr.registerOutParameter(1, Types.INTEGER);
@@ -134,11 +138,9 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la lecture du capital dans la BD: " + sqle);
         }
-        return or;
     }
 
-    private int getMD(){
-        int MD = 0;
+    private void getMD(){
         try{
             CallableStatement getMd = conn.prepareCall("{ ? = call JOUEUR.GETDEW}");
             getMd.registerOutParameter(1, Types.INTEGER);
@@ -147,11 +149,9 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la lecture des mountain dew dans la BD: " + sqle);
         }
-        return MD;
     }
 
-    private int getDoritos(){
-        int Doritos = 0;
+    private void getDoritos(){
         try{
             CallableStatement getDoritos = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
             getDoritos.registerOutParameter(1, Types.INTEGER);
@@ -160,7 +160,6 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
         }
-        return Doritos;
     }
 
     private void addOr(){
@@ -170,9 +169,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
         }
-        int or = getOr();
+        getOr();
         orLabel.setText("Or: " + or);
-        System.out.println("Or: " + Integer.toString(or));
     }
 
     private void addMD(){
@@ -182,9 +180,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de mountain dew dans la BD: " + sqle);
         }
-        int MountainDew = getMD();
-        mdLabel.setText("Moutain Dew: " + MountainDew);
-        System.out.println("Moutain Dews: " + Integer.toString(MountainDew));
+        getMD();
+        mdLabel.setText("Moutain Dew: " + MD);
     }
 
     private void addDoritos(){
@@ -194,9 +191,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de doritos dans la BD: " + sqle);
         }
-        int Doritos = getDoritos();
+        getDoritos();
         dLabel.setText("Doritos: " + Doritos);
-        System.out.println("Doritos: " + Integer.toString(Doritos));
     }
 
     private void removeOr(){
@@ -206,7 +202,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
         }
-        orLabel.setText("Or: " + getOr());
+        getOr();
+        orLabel.setText("Or: " + or);
     }
 
     private void removeMD(){
@@ -216,7 +213,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction de mountain dew dans la BD: " + sqle);
         }
-        mdLabel.setText("Mountain Dew: " + getMD());
+        getMD();
+        mdLabel.setText("Mountain Dew: " + MD);
     }
 
     private void removeDoritos(){
@@ -226,7 +224,8 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction des doritos dans la BD: " + sqle);
         }
-        dLabel.setText("Doritos: " + getDoritos());
+        getDoritos();
+        dLabel.setText("Doritos: " + Doritos);
     }
 
     private void addAUB(){
@@ -502,21 +501,24 @@ public class Main extends Application {
     }
 
     private Group initializeMap() {
+        getOr();
+        getMD();
+        getDoritos();
 
         orLabel.setLayoutX(1000);
         orLabel.setLayoutY(820);
         orLabel.setFont(new Font(30));
-        orLabel.setText("Or: " + getOr());
+        orLabel.setText("Or: " + or);
 
         mdLabel.setLayoutX(1120);
         mdLabel.setLayoutY(820);
         mdLabel.setFont(new Font(30));
-        mdLabel.setText("Mountain Dew: " + getMD());
+        mdLabel.setText("Mountain Dew: " + MD);
 
         dLabel.setLayoutX(1400);
         dLabel.setLayoutY(820);
         dLabel.setFont(new Font(30));
-        dLabel.setText("Doritos: " + getDoritos());
+        dLabel.setText("Doritos: " + Doritos);
 
         Button quitButton = new Button("Quitter");
         quitButton.setLayoutX(10);
@@ -561,17 +563,17 @@ public class Main extends Application {
 
         freeButton.setOnAction(e -> {
             try {
-                if (trollPrison && getMD() > 0){
+                if (trollPrison && MD > 0){
                     removeMD();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     trollPrison = false;
-                } else if (goblinPrison && getDoritos() > 0){
+                } else if (goblinPrison && Doritos > 0){
                     removeDoritos();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     goblinPrison = false;
-                } else if ((goblinPrison || trollPrison) && getOr() >= 3){
+                } else if ((goblinPrison || trollPrison) && or >= 3){
                     removeOr();
                     removeOr();
                     removeOr();
@@ -593,7 +595,7 @@ public class Main extends Application {
 
         buildButton.setOnAction(e -> {
             try {
-                if (getOr() >= 3){
+                if (or >= 3){
                     removeOr();
                     removeOr();
                     removeOr();
