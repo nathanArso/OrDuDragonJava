@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.operations.Or;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -25,6 +26,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 public class Main extends Application {
+    public static final int DELAI = 1000;
     public static final int CIRCLE_RADIUS = 10;
     public static final int PORT_MAP = 51005;
     public static final int PORT_POS = 51006;
@@ -56,10 +58,6 @@ public class Main extends Application {
 
     public Noeud selectedNoeud;
     public int selectedID;
-
-    public int or = 0;
-    public int MountainDew = 0;
-    public int Doritos = 0;
 
     String ClientIP;
 
@@ -126,6 +124,45 @@ public class Main extends Application {
         }
     }
 
+    private int getOr(){
+        int or = 0;
+        try{
+            CallableStatement getOr = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
+            getOr.registerOutParameter(1, Types.INTEGER);
+            getOr.execute();
+            or = getOr.getInt(1);
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de la lecture du capital dans la BD: " + sqle);
+        }
+        return or;
+    }
+
+    private int getMD(){
+        int MD = 0;
+        try{
+            CallableStatement getMd = conn.prepareCall("{ ? = call JOUEUR.GETDEW}");
+            getMd.registerOutParameter(1, Types.INTEGER);
+            getMd.execute();
+            MD = getMd.getInt(1);
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de la lecture des mountain dew dans la BD: " + sqle);
+        }
+        return MD;
+    }
+
+    private int getDoritos(){
+        int Doritos = 0;
+        try{
+            CallableStatement getDoritos = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
+            getDoritos.registerOutParameter(1, Types.INTEGER);
+            getDoritos.execute();
+            Doritos = getDoritos.getInt(1);
+        } catch(SQLException sqle){
+            System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
+        }
+        return Doritos;
+    }
+
     private void addOr(){
         try{
             CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
@@ -133,7 +170,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
         }
-        ++or;
+        int or = getOr();
         orLabel.setText("Or: " + or);
         System.out.println("Or: " + Integer.toString(or));
     }
@@ -145,7 +182,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de mountain dew dans la BD: " + sqle);
         }
-        ++MountainDew;
+        int MountainDew = getMD();
         mdLabel.setText("Moutain Dew: " + MountainDew);
         System.out.println("Moutain Dews: " + Integer.toString(MountainDew));
     }
@@ -157,7 +194,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de l'ajout de doritos dans la BD: " + sqle);
         }
-        ++Doritos;
+        int Doritos = getDoritos();
         dLabel.setText("Doritos: " + Doritos);
         System.out.println("Doritos: " + Integer.toString(Doritos));
     }
@@ -169,8 +206,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
         }
-        or--;
-        orLabel.setText("Or: " + or);
+        orLabel.setText("Or: " + getOr());
     }
 
     private void removeMD(){
@@ -180,8 +216,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction de mountain dew dans la BD: " + sqle);
         }
-        MountainDew--;
-        mdLabel.setText("Mountain Dew: " + MountainDew);
+        mdLabel.setText("Mountain Dew: " + getMD());
     }
 
     private void removeDoritos(){
@@ -191,8 +226,7 @@ public class Main extends Application {
         } catch(SQLException sqle){
             System.err.println("Erreur lors de la reduction des doritos dans la BD: " + sqle);
         }
-        Doritos--;
-        dLabel.setText("Doritos: " + Doritos);
+        dLabel.setText("Doritos: " + getDoritos());
     }
 
     private void addAUB(){
@@ -245,7 +279,7 @@ public class Main extends Application {
                     System.out.println("Erreur: " + ioe);
                 }
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(DELAI);
                 } catch (InterruptedException ie) {
                 }
             }
@@ -263,8 +297,7 @@ public class Main extends Application {
             switch (comb[1]) {
                 case "J":
                     //Gérer le joueur.
-                    if (noeuds.get(Integer.parseInt(comb[0])) == selectedNoeud) noeuds.get(Integer.parseInt(comb[0])).setFill(Color.AQUA);
-                    else noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
+                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
                     break;
                 case "T":
                     //Gérer le troll
@@ -473,14 +506,17 @@ public class Main extends Application {
         orLabel.setLayoutX(1000);
         orLabel.setLayoutY(820);
         orLabel.setFont(new Font(30));
+        orLabel.setText("Or: " + getOr());
 
         mdLabel.setLayoutX(1120);
         mdLabel.setLayoutY(820);
         mdLabel.setFont(new Font(30));
+        mdLabel.setText("Mountain Dew: " + getMD());
 
         dLabel.setLayoutX(1400);
         dLabel.setLayoutY(820);
         dLabel.setFont(new Font(30));
+        dLabel.setText("Doritos: " + getDoritos());
 
         Button quitButton = new Button("Quitter");
         quitButton.setLayoutX(10);
@@ -489,6 +525,7 @@ public class Main extends Application {
         quitButton.setOnAction(e -> {
             try {
                 conn.close();
+                //Reset currencies in BD
                 PDFos.writeBytes("QUIT\n");
                 window.close();
             } catch (SQLException sqle){
@@ -524,17 +561,17 @@ public class Main extends Application {
 
         freeButton.setOnAction(e -> {
             try {
-                if (trollPrison && MountainDew > 0){
+                if (trollPrison && getMD() > 0){
                     removeMD();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     trollPrison = false;
-                } else if (goblinPrison && Doritos > 0){
+                } else if (goblinPrison && getDoritos() > 0){
                     removeDoritos();
                     PDFos.writeBytes("FREE\n");
                     playerFree = true;
                     goblinPrison = false;
-                } else if (goblinPrison || trollPrison && or >= 3){
+                } else if ((goblinPrison || trollPrison) && getOr() >= 3){
                     removeOr();
                     removeOr();
                     removeOr();
@@ -556,7 +593,7 @@ public class Main extends Application {
 
         buildButton.setOnAction(e -> {
             try {
-                if (or >= 3){
+                if (getOr() >= 3){
                     removeOr();
                     removeOr();
                     removeOr();
