@@ -14,7 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import java.sql.*;
+
 import oracle.jdbc.*;
 import oracle.jdbc.pool.*;
 
@@ -26,30 +28,23 @@ import java.sql.Connection;
 import java.util.ArrayList;
 
 public class Main extends Application {
-    public static final int DELAI = 1000;
     public static final int CIRCLE_RADIUS = 10;
+    public static final int DELAI = 1000;
     public static final int PORT_MAP = 51005;
     public static final int PORT_POS = 51006;
     public static final int PORT_GAME = 51007;
     public static final String ServerIP = "149.56.47.97";
-    private InetSocketAddress adrMapServer;
+
     private InetSocketAddress adrPosServer;
     private InetSocketAddress adrGameServer;
     private ServerSocket socServer;
-    private Socket socClient;
+
     private Socket socClientPos;
     private Socket socClientGame;
 
-    private ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
-    private Group groupe = new Group();
-
-    private BufferedReader mapReader;
     private BufferedReader posReader;
     private PrintWriter posWriter;
     Stage window;
-
-    ArrayList<String> coords = new ArrayList<String>();
-    ArrayList<String> links = new ArrayList<String>();
 
     ArrayList<String> positions = new ArrayList<String>();
 
@@ -73,7 +68,26 @@ public class Main extends Application {
     boolean trollPrison = false;
     boolean goblinPrison = false;
 
+    Button buildButton = new Button("Build");
+    Button freeButton = new Button("Free");
+    Button quitButton = new Button("Quitter");
+
+    public static Socket socClient;
+    private InetSocketAddress adrMapServer;
+
+    public static ArrayList<String> coords = new ArrayList<String>();
+    public static ArrayList<String> links = new ArrayList<String>();
+
+    public static ArrayList<Noeud> noeuds = new ArrayList<Noeud>();
+
+    public static Group groupe = new Group();
+
+    public static BufferedReader mapReader;
+
     Connection conn = null;
+
+    String linePDF = null;
+    String line = null;
 
     public static void main(String args[]) {
         launch(args);
@@ -85,40 +99,16 @@ public class Main extends Application {
         @Override
         public void run() {
             try {
-                if (playerFree){
+
                     //TODO to complete
-                    // PDFos = new DataOutputStream(socClientGame.getOutputStream());
-                    PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+                    //PDFos = new DataOutputStream(socClientGame.getOutputStream());
+                    //PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
 
                     PDFos.writeBytes("GOTO " + selectedID + "\n");
-                    System.out.println("Deplacement au noeud " + selectedID);
+                    PDFos.flush();
+                    System.out.println("GOTO " + selectedID);
 
-                    String linePDF = PDFis.readLine();
-                    //if(linePDF.equals("OK"))
-                        linePDF += " " + PDFis.readLine();
-                    System.out.println(linePDF);
-                    if (linePDF.contains("P")) {
-                        addOr();
-                    } else if (linePDF.contains("M")) {
-                        addMD();
-                    } else if (linePDF.contains("D")) {
-                        addDoritos();
-                    } else if (linePDF.contains("AUB")) {
-                        addAUB();
-                    } else if (linePDF.contains("MAN")) {
-                        addMAN();
-                    } else if (linePDF.contains("CHA")) {
-                        addCHA();
-                    } else if (linePDF.contains("T")) {
-                        trollPrison = true;
-                        playerFree = false;
-                        System.out.println("Capture par un troll");
-                    } else if (linePDF.contains("G")) {
-                        goblinPrison = true;
-                        playerFree = false;
-                        System.out.println("Capture par un goblin");
-                    }
-                }
+                    Platform.runLater(new reponse());
 
             } catch (UnknownHostException e) {
                 System.err.println("Hote introuvable.");
@@ -129,141 +119,105 @@ public class Main extends Application {
         }
     }
 
-    private void getOr(){
-        try{
-            CallableStatement getOr = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
-            getOr.registerOutParameter(1, Types.INTEGER);
-            getOr.execute();
-            or = getOr.getInt(1);
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de la lecture du capital dans la BD: " + sqle);
+    class reponse implements Runnable {
+        @Override
+        public void run() {
+            try {
+                linePDF = PDFis.readLine();
+                //if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
+                System.out.println(linePDF);
+
+                if (linePDF.startsWith("P")) {
+                    CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
+                    addCapital.executeUpdate();
+                } else if (linePDF.startsWith("M")) {
+                    CallableStatement addMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWPLUS}");
+                    addMD.executeUpdate();
+                } else if (linePDF.startsWith("D")) {
+                    CallableStatement addD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSPLUS}");
+                    addD.executeUpdate();
+                } else if (linePDF.startsWith("AUB")) {
+                    CallableStatement addAUB = conn.prepareCall("{ call JOUEUR.MISAJOURAUBERGEPLUS}");
+                    addAUB.executeUpdate();
+                } else if (linePDF.startsWith("MAN")) {
+                    CallableStatement addMAN = conn.prepareCall("{ call JOUEUR.MISAJOURHOTELPLUS}");
+                    addMAN.executeUpdate();
+                } else if (linePDF.startsWith("CHA")) {
+                    CallableStatement addCHA = conn.prepareCall("{ call JOUEUR.MISAJOURCHATEAUPLUS}");
+                    addCHA.executeUpdate();
+                } else if (linePDF.startsWith("T")) {
+                    trollPrison = true;
+                    playerFree = false;
+                    System.out.println("Capture par un troll");
+                } else if (linePDF.startsWith("G")) {
+                    goblinPrison = true;
+                    playerFree = false;
+                    System.out.println("Capture par un goblin");
+                }
+
+                Platform.runLater(new CurrencyUI());
+            } catch (SQLException sqe) {
+                System.err.println("Erreur dans la modification de la BD: " + sqe);
+            } catch (IOException ioe){
+                System.err.println("Erreur dans la modification de la BD: " + ioe);
+            }
         }
     }
 
-    private void getMD(){
-        try{
-            CallableStatement getMd = conn.prepareCall("{ ? = call JOUEUR.GETDEW}");
-            getMd.registerOutParameter(1, Types.INTEGER);
-            getMd.execute();
-            MD = getMd.getInt(1);
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de la lecture des mountain dew dans la BD: " + sqle);
+    class CurrencyUI implements Runnable{
+        public void run(){
+            getOr();
+            getDoritos();
+            getMD();
+            orLabel.setText("Or: " + or);
+            mdLabel.setText("Mountain Dew: " + MD);
+            dLabel.setText("Doritos: " + Doritos);
         }
-    }
 
-    private void getDoritos(){
-        try{
-            CallableStatement getDoritos = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
-            getDoritos.registerOutParameter(1, Types.INTEGER);
-            getDoritos.execute();
-            Doritos = getDoritos.getInt(1);
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
+        private void getOr() {
+            try {
+                CallableStatement getOr = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
+                getOr.registerOutParameter(1, Types.INTEGER);
+                getOr.execute();
+                or = getOr.getInt(1);
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la lecture du capital dans la BD: " + sqle);
+            }
         }
-    }
 
-    private void addOr(){
-        try{
-            CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
-            addCapital.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
+        private void getMD() {
+            try {
+                CallableStatement getMd = conn.prepareCall("{ ? = call JOUEUR.GETDEW}");
+                getMd.registerOutParameter(1, Types.INTEGER);
+                getMd.execute();
+                MD = getMd.getInt(1);
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la lecture des mountain dew dans la BD: " + sqle);
+            }
         }
-        getOr();
-        orLabel.setText("Or: " + or);
-    }
 
-    private void addMD(){
-        try{
-            CallableStatement addMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWPLUS}");
-            addMD.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout de mountain dew dans la BD: " + sqle);
-        }
-        getMD();
-        mdLabel.setText("Moutain Dew: " + MD);
-    }
-
-    private void addDoritos(){
-        try{
-            CallableStatement addD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSPLUS}");
-            addD.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout de doritos dans la BD: " + sqle);
-        }
-        getDoritos();
-        dLabel.setText("Doritos: " + Doritos);
-    }
-
-    private void removeOr(){
-        try{
-            CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALMOINS}");
-            addCapital.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
-        }
-        getOr();
-        orLabel.setText("Or: " + or);
-    }
-
-    private void removeMD(){
-        try{
-            CallableStatement removeMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWMOINS}");
-            removeMD.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de la reduction de mountain dew dans la BD: " + sqle);
-        }
-        getMD();
-        mdLabel.setText("Mountain Dew: " + MD);
-    }
-
-    private void removeDoritos(){
-        try{
-            CallableStatement removeD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSMOINS}");
-            removeD.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de la reduction des doritos dans la BD: " + sqle);
-        }
-        getDoritos();
-        dLabel.setText("Doritos: " + Doritos);
-    }
-
-    private void addAUB(){
-        try{
-            CallableStatement addAUB = conn.prepareCall("{ call JOUEUR.MISAJOURAUBERGEPLUS}");
-            addAUB.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout d'un auberge dans la BD: " + sqle);
-        }
-    }
-
-    private void addMAN(){
-        try{
-            CallableStatement addMAN = conn.prepareCall("{ call JOUEUR.MISAJOURHOTELPLUS}");
-            addMAN.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout de manoir dans la BD: " + sqle);
-        }
-    }
-
-    private void addCHA(){
-        try{
-            CallableStatement addCHA = conn.prepareCall("{ call JOUEUR.MISAJOURCHATEAUPLUS}");
-            addCHA.executeUpdate();
-        } catch(SQLException sqle){
-            System.err.println("Erreur lors de l'ajout d'un chateau dans la BD: " + sqle);
+        private void getDoritos() {
+            try {
+                CallableStatement getDoritos = conn.prepareCall("{ ? = call JOUEUR.GETCAPITAL}");
+                getDoritos.registerOutParameter(1, Types.INTEGER);
+                getDoritos.execute();
+                Doritos = getDoritos.getInt(1);
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de l'ajout de capital dans la BD: " + sqle);
+            }
         }
     }
 
     //Tache sans fin
     class TacheParallele implements Runnable {
         public void run() {
-            String line = null;
+
 
             while (true) {
                 //(Refresh)
                 try {
                     PDFos.writeBytes("NOOP\n"); //Indique au serveur quon est toujours la
+                    PDFos.flush();
 
                     line = posReader.readLine();
 
@@ -271,7 +225,7 @@ public class Main extends Application {
                         positions.add(line);
                         System.out.println(line);
 
-                        refreshMap(line);
+                        Platform.runLater(new refreshMap());
                     }
                 } catch (IOException ioe) {
                     //TODO When game ends.
@@ -284,52 +238,54 @@ public class Main extends Application {
             }
         }
     }
+    class refreshMap implements Runnable {
+        @Override
+        public void run() {
+            for (int i = 0; i < Main.noeuds.size(); ++i) Main.noeuds.get(i).setFill(Color.BLACK); //set color back to black
 
-    private void refreshMap(String line) {
-        for (int i = 0; i < noeuds.size(); ++i) noeuds.get(i).setFill(Color.BLACK); //set color back to black
+            String combs[] = line.split(" ");
 
-        String combs[] = line.split(" ");
+            for (int i = 0; i < combs.length; ++i) {
+                String comb[] = combs[i].split(":");
 
-        for (int i = 0; i < combs.length; ++i) {
-            String comb[] = combs[i].split(":");
-
-            switch (comb[1]) {
-                case "J":
-                    //Gérer le joueur.
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
-                    break;
-                case "T":
-                    //Gérer le troll
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
-                    break;
-                case "G":
-                    //Gérer Gobelin
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.DARKRED);
-                    break;
-                case "P":
-                    //Gérer pièce d'or
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GOLD);
-                    break;
-                case "M":
-                    //Gérer Mountain Dew
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
-                    break;
-                case "D":
-                    //Gerer Doritos
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.ORANGE);
-                    break;
-                case "A":
-                    //Gerer auberges
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.MEDIUMPURPLE);
-                    break;
-                case "N":
-                    //Gerer manoir
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
-                    break;
-                case "C":
-                    //Gerer chateau
-                    noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUEVIOLET);
-                    break;
+                switch (comb[1]) {
+                    case "J":
+                        //Gérer le joueur.
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
+                        break;
+                    case "T":
+                        //Gérer le troll
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
+                        break;
+                    case "G":
+                        //Gérer Gobelin
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.DARKRED);
+                        break;
+                    case "P":
+                        //Gérer pièce d'or
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GOLD);
+                        break;
+                    case "M":
+                        //Gérer Mountain Dew
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
+                        break;
+                    case "D":
+                        //Gerer Doritos
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.ORANGE);
+                        break;
+                    case "A":
+                        //Gerer auberges
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.MEDIUMPURPLE);
+                        break;
+                    case "N":
+                        //Gerer manoir
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
+                        break;
+                    case "C":
+                        //Gerer chateau
+                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUEVIOLET);
+                        break;
+                }
             }
         }
     }
@@ -351,17 +307,17 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        adrMapServer = new InetSocketAddress(ServerIP, PORT_MAP);
-        socServer = new ServerSocket(PORT_MAP);
-        socClient = new Socket();
+       // socServer = new ServerSocket(PORT_MAP);
 
-        socClient.connect(adrMapServer);
         System.out.println("Client connecte.");
 
         adrPosServer = new InetSocketAddress(ServerIP, PORT_POS);
         adrGameServer = new InetSocketAddress(ServerIP, PORT_GAME);
+        adrMapServer = new InetSocketAddress(Main.ServerIP, Main.PORT_MAP);
+        socClient = new Socket();
 
-        keepMapServerInfo();
+        socClient.connect(adrMapServer);
+        Platform.runLater(new MapServer());
 
         window = primaryStage;
 
@@ -375,7 +331,7 @@ public class Main extends Application {
         Label passwordLabel = new Label("Password:");
         PasswordField passwordField = new PasswordField();
         passwordField.setText("GTTA");
-        logInButton.setOnAction(e -> logIn(userNameTextField, passwordField));
+        logInButton.setOnAction(e -> Platform.runLater(new logIn()));
 
         //Format page.
         primaryStage.centerOnScreen();
@@ -403,107 +359,76 @@ public class Main extends Application {
         window.show();
     }
 
-    private void keepMapServerInfo() {
-        try {
-            //Lit les information envoyer par le serveur (Info carte)
-            mapReader = new BufferedReader(new InputStreamReader(socClient.getInputStream()));
+    class connection implements Runnable {
+        String url = "jdbc:oracle:thin:@205.237.244.251:1521:orcl";
 
-            Boolean fini = false;
+        public void run(){
+            try {
+                OracleDataSource ods = new OracleDataSource();
 
-            Boolean bLinks = false;
-
-            //Fill arays avec les informations de la carte
-            while (!fini) {
-
-                String line = mapReader.readLine();
-
-                if (!bLinks) {
-                    coords.add(line);
-                    if (line.equals("")) {
-                        bLinks = true;
-                    }
-                } else if (bLinks) links.add(line);
-
-                if (line != null) {
-                    System.out.println(line);
-                } else if (line != null) {
-                    System.out.println(line);
-                } else {
-                    fini = true;
-                }
+                ods.setURL(url);
+                ods.setUser("ATTG");
+                ods.setPassword("GTTA");
+                conn = ods.getConnection();
+            } catch (SQLException sqle) {
+                System.err.println("Erreur dans la connexion: " + sqle.getMessage());
             }
-
-            mapReader.close();
-        } catch (IOException io) {
-            System.err.println("Erreur dans la lecture de la carte: " + io.getMessage());
         }
-
     }
 
+
     // Event clieck on connexion button
-    private void logIn(TextField userNameTextField, TextField passwordTextField) {
+    class logIn implements Runnable{
 
-        String user1 = userNameTextField.getText();
-        String mdep = passwordTextField.getText();
-        String url="jdbc:oracle:thin:@205.237.244.251:1521:orcl";
+        @Override
+        public void run() {
+            Platform.runLater(new connection());
 
-        try {
-            OracleDataSource ods = new OracleDataSource();
+            Scene gameScene = new Scene(groupe, 1600, 900);
 
-            ods.setURL(url);
-            ods.setUser(user1);
-            ods.setPassword(mdep);
-            conn = ods.getConnection();
-        }catch (SQLException sqle){
-            System.err.println("Erreur dans la connexion: " + sqle.getMessage());
+            // assignation d'un gestionaire de clic
+            window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
+            window.show();
+
+            initializeMap();
+
+            try {
+                socClientPos = new Socket();
+                socClientPos.connect(adrPosServer);
+                socClientGame = new Socket();
+                socClientGame.connect(adrGameServer);
+
+                PDFos = new DataOutputStream(socClientGame.getOutputStream());
+                PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+                posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
+                posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
+                ClientIP = socClientGame.getLocalAddress().getHostAddress();
+                System.out.println("IP: " + ClientIP);
+            } catch (IOException io) {
+                System.err.println("Erreur création socket position: " + io.getMessage());
+            }
+
+            try {
+
+                PDFos.writeBytes("HELLO zATTG " + ClientIP + "\n");
+                PDFos.flush();
+                System.out.println(posReader.readLine());
+            } catch (IOException io) {
+                System.err.println(io.getMessage());
+            }
+
+            // creation d'une tache parallele pour ne pas geler le UI Thread
+            Thread t = new Thread(new TacheParallele());
+            // un thread "daemon" s'arretera avec la fermeture de la fenetre
+            t.setDaemon(true);
+            t.start();
+
+            window.setScene(gameScene);
+            window.show();
         }
-
-        Scene gameScene = new Scene(groupe, 1600, 900);
-
-        // assignation d'un gestionaire de clic
-        window.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gererClic(e));
-        window.show();
-
-        initializeMap();
-
-        try {
-            socClientPos = new Socket();
-            socClientPos.connect(adrPosServer);
-            socClientGame = new Socket();
-            socClientGame.connect(adrGameServer);
-
-            PDFos = new DataOutputStream(socClientGame.getOutputStream());
-            PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
-            posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
-            posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
-            ClientIP = socClientGame.getLocalAddress().getHostAddress();
-            System.out.println("IP: " + ClientIP);
-        } catch (IOException io) {
-            System.err.println("Erreur création socket position: " + io.getMessage());
-        }
-
-        try {
-
-            PDFos.writeBytes("HELLO zATTG " + ClientIP + "\n");
-        } catch (IOException io) {
-            System.err.println(io.getMessage());
-        }
-
-        // creation d'une tache parallele pour ne pas geler le UI Thread
-        Thread t = new Thread(new TacheParallele());
-        // un thread "daemon" s'arretera avec la fermeture de la fenetre
-        t.setDaemon(true);
-        t.start();
-
-        window.setScene(gameScene);
-        window.show();
-
     }
 
     private Group initializeMap() {
-        getOr();
-        getMD();
-        getDoritos();
 
         orLabel.setLayoutX(1000);
         orLabel.setLayoutY(820);
@@ -520,28 +445,9 @@ public class Main extends Application {
         dLabel.setFont(new Font(30));
         dLabel.setText("Doritos: " + Doritos);
 
-        Button quitButton = new Button("Quitter");
-        quitButton.setLayoutX(10);
-        quitButton.setLayoutY(10);
-
-        quitButton.setOnAction(e -> {
-            try {
-                conn.close();
-                //Reset currencies in BD
-                PDFos.writeBytes("QUIT\n");
-                window.close();
-            } catch (SQLException sqle){
-               System.err.println("Erreur lors de la fermeture de la connection a la BD: " + sqle);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
-
-        Button buildButton = new Button("Build");
-        Build(buildButton);
-
-        Button freeButton = new Button("Free");
-        Free(freeButton);
+        Platform.runLater(new Quit());
+        Platform.runLater(new Free());
+        Platform.runLater(new Build());
 
         groupe.getChildren().add(new ImageView(new Image("http://prog101.com/travaux/dragon/images/nowhereland.png"))); //Ajouter carte arriere plan
         groupe.getChildren().add(quitButton);
@@ -551,104 +457,130 @@ public class Main extends Application {
         groupe.getChildren().add(mdLabel);
         groupe.getChildren().add(dLabel);
 
-        for (int i = 0; i < coords.size(); ++i) generateCircle(i); //Genere les noeud
-        for (int i = 0; i < links.size(); ++i) generateLine(i); //Genere les liaison.
+        for (int i = 0; i < coords.size(); ++i) MapServer.generateCircle(i); //Genere les noeud
+        for (int i = 0; i < links.size(); ++i) MapServer.generateLine(i); //Genere les liaison.
 
         return groupe;
     }
 
-    private void Free(Button freeButton){
-        freeButton.setLayoutX(200);
-        freeButton.setLayoutY(10);
+    class Quit implements Runnable {
+        @Override
+        public void run() {
+            quitButton.setLayoutX(10);
+            quitButton.setLayoutY(10);
 
-        freeButton.setOnAction(e -> {
-            try {
-                if (trollPrison && MD > 0){
-                    removeMD();
-                    PDFos.writeBytes("FREE\n");
-                    playerFree = true;
-                    trollPrison = false;
-                } else if (goblinPrison && Doritos > 0){
-                    removeDoritos();
-                    PDFos.writeBytes("FREE\n");
-                    playerFree = true;
-                    goblinPrison = false;
-                } else if ((goblinPrison || trollPrison) && or >= 3){
-                    removeOr();
-                    removeOr();
-                    removeOr();
-                    PDFos.writeBytes("FREE\n");
-                    playerFree = true;
-                    trollPrison = false;
-                    goblinPrison = false;
+            quitButton.setOnAction(e -> {
+                try {
+                    conn.close();
+                    //Reset currencies in BD
+                    PDFos.writeBytes("QUIT\n");
+                    window.close();
+                } catch (SQLException sqle) {
+                    System.err.println("Erreur lors de la fermeture de la connection a la BD: " + sqle);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
+            });
+        }
     }
 
-    private void Build(Button buildButton) {
-        buildButton.setLayoutX(100);
-        buildButton.setLayoutY(10);
+    class Free implements Runnable {
+        @Override
+        public void run() {
+            freeButton.setLayoutX(200);
+            freeButton.setLayoutY(10);
 
-        buildButton.setOnAction(e -> {
-            try {
-                if (or >= 3){
-                    removeOr();
-                    removeOr();
-                    removeOr();
-                    PDFos.writeBytes("BUILD\n");
-                    PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
-                    System.out.println(PDFis.readLine());
-                }else {
-                    System.out.println("Pas asser d'or pour construire!");
+            freeButton.setOnAction(e -> {
+                try {
+                    if (trollPrison && MD > 0) {
+                        removeMD();
+                        PDFos.writeBytes("FREE\n");
+                        playerFree = true;
+                        trollPrison = false;
+                    } else if (goblinPrison && Doritos > 0) {
+                        removeDoritos();
+                        PDFos.writeBytes("FREE\n");
+                        playerFree = true;
+                        goblinPrison = false;
+                    } else if ((goblinPrison || trollPrison) && or >= 3) {
+                        removeOr();
+                        removeOr();
+                        removeOr();
+                        PDFos.writeBytes("FREE\n");
+                        playerFree = true;
+                        trollPrison = false;
+                        goblinPrison = false;
+                    }
+
+                } catch (IOException e1) {
+                    e1.printStackTrace();
                 }
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        });
-
-    }
-
-    private void generateCircle(int index) {
-
-        if (!coords.get(index).equals("")) {
-            Noeud currentCircle = new Noeud();
-
-            String info[] = coords.get(index).split(" ");
-            int x = Integer.parseInt(info[1]);
-            int y = Integer.parseInt(info[2]);
-
-            noeuds.add(new Noeud(x, y, CIRCLE_RADIUS));
-            currentCircle = noeuds.get(index);
-            currentCircle.setStroke(Color.AZURE);
-            currentCircle.setFill(Color.BLACK);
-            currentCircle.setStrokeWidth(2);
-            groupe.getChildren().add(currentCircle);
+            });
         }
 
-    }
-
-    private void generateLine(int index) {
-
-        if (links.get(index) != null) {
-            String info[] = links.get(index).split(" ");
-
-            for (int i = 1; i < info.length; ++i) {
-                double startX = noeuds.get(index).getCenterX();
-                double startY = noeuds.get(index).getCenterY();
-                double endX = noeuds.get(Integer.parseInt(info[i])).getCenterX();
-                double endY = noeuds.get(Integer.parseInt(info[i])).getCenterY();
-
-                Chemin currentLine = new Chemin(startX, startY, endX, endY);
-                currentLine.setStroke(Color.BLACK);
-                currentLine.setStrokeWidth(1);
-                groupe.getChildren().add(currentLine);
+        private void removeOr() {
+            try {
+                CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALMOINS}");
+                addCapital.executeUpdate();
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
             }
-
+            orLabel.setText("Or: " + or);
         }
 
+        private void removeMD() {
+            try {
+                CallableStatement removeMD = conn.prepareCall("{ call JOUEUR.MISEAJOURMONTDEWMOINS}");
+                removeMD.executeUpdate();
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la reduction de mountain dew dans la BD: " + sqle);
+            }
+            mdLabel.setText("Mountain Dew: " + MD);
+        }
+
+        private void removeDoritos() {
+            try {
+                CallableStatement removeD = conn.prepareCall("{ call JOUEUR.MISEAJOURDORITOSMOINS}");
+                removeD.executeUpdate();
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la reduction des doritos dans la BD: " + sqle);
+            }
+            dLabel.setText("Doritos: " + Doritos);
+        }
+    }
+
+    class Build implements Runnable {
+
+        public void run(){
+            buildButton.setLayoutX(100);
+            buildButton.setLayoutY(10);
+
+            buildButton.setOnAction(e -> {
+                try {
+                    if (or >= 3) {
+                        removeOr();
+                        removeOr();
+                        removeOr();
+                        PDFos.writeBytes("BUILD\n");
+                        PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
+                        System.out.println(PDFis.readLine());
+                    } else {
+                        System.out.println("Pas asser d'or pour construire!");
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            });
+        }
+
+        private void removeOr() {
+            try {
+                CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALMOINS}");
+                addCapital.executeUpdate();
+            } catch (SQLException sqle) {
+                System.err.println("Erreur lors de la reduction du capital dans la BD: " + sqle);
+            }
+            orLabel.setText("Or: " + or);
+        }
     }
 }
