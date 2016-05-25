@@ -2,9 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="14f7a1b2-362c-4830-873c-084748a1c5b7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/MapServer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/EnigmeReceive.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/EnigmeSend.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$Build.class" afterPath="$PROJECT_DIR$/out/production/java/Main$Build.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$CurrencyUI.class" afterPath="$PROJECT_DIR$/out/production/java/Main$CurrencyUI.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$Free.class" afterPath="$PROJECT_DIR$/out/production/java/Main$Free.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$Quit.class" afterPath="$PROJECT_DIR$/out/production/java/Main$Quit.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$TacheParallele.class" afterPath="$PROJECT_DIR$/out/production/java/Main$TacheParallele.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$deplacer.class" afterPath="$PROJECT_DIR$/out/production/java/Main$deplacer.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$connection.class" afterPath="$PROJECT_DIR$/out/production/java/Main$connection.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$logIn.class" afterPath="$PROJECT_DIR$/out/production/java/Main$logIn.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main$reponse.class" afterPath="$PROJECT_DIR$/out/production/java/Main$reponse.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/java/Main.class" afterPath="$PROJECT_DIR$/out/production/java/Main.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.java" afterPath="$PROJECT_DIR$/src/Main.java" />
@@ -32,22 +39,32 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.24203822">
-              <caret line="89" column="23" selection-start-line="89" selection-start-column="23" selection-end-line="89" selection-end-column="23" />
+            <state vertical-scroll-proportion="3.8025477">
+              <caret line="279" column="13" selection-start-line="279" selection-start-column="13" selection-end-line="279" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-                <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-                <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-                <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-                <element signature="method#start#0;class#Main#0" expanded="false" />
-                <element signature="class#connection#0;class#Main#0" expanded="false" />
-                <element signature="class#logIn#0;class#Main#0" expanded="false" />
-                <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-                <element signature="class#Quit#0;class#Main#0" expanded="false" />
-                <element signature="class#Free#0;class#Main#0" expanded="false" />
-                <element signature="class#Build#0;class#Main#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EnigmeSend.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/EnigmeSend.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="3" column="23" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EnigmeReceive.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/EnigmeReceive.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -56,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/src/MapServer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="91" column="5" selection-start-line="91" selection-start-column="5" selection-end-line="91" selection-end-column="5" />
+              <caret line="0" column="4" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="4" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -69,10 +86,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-              <folding>
-                <element signature="e#160#161#0" expanded="false" />
-                <element signature="e#183#184#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -80,7 +94,7 @@
       <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.333333">
+            <state vertical-scroll-proportion="0.0">
               <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
               <folding />
             </state>
@@ -131,6 +145,7 @@
         <option value="$PROJECT_DIR$/src/Noeud.java" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/MapServer.java" />
+        <option value="$PROJECT_DIR$/src/EnigmeReceive.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
       </list>
     </option>
@@ -174,6 +189,8 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -230,8 +247,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -608,7 +623,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="13" />
+      <option name="time" value="15" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -617,43 +632,11 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/java.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="11" column="5" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Noeud.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -688,16 +671,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -713,10 +686,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -743,16 +713,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -761,10 +721,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -791,16 +748,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -809,10 +756,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -839,16 +783,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -857,10 +791,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -887,16 +818,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -905,10 +826,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -935,16 +853,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -953,10 +861,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -983,16 +888,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1012,16 +907,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1041,16 +926,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1070,16 +945,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1099,16 +964,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1120,16 +975,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1141,16 +986,6 @@
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1169,40 +1004,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Noeud.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-          <folding>
-            <element signature="e#160#161#0" expanded="false" />
-            <element signature="e#183#184#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files (x86)/Java/jdk1.8.0_91/javafx-src.zip!/javafx/event/EventHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.543379">
           <caret line="44" column="9" selection-start-line="44" selection-start-column="9" selection-end-line="44" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/MapServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="91" column="5" selection-start-line="91" selection-start-column="5" selection-end-line="91" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.333333">
-          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1210,6 +1015,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Noeud.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="14" column="22" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -1222,23 +1043,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/MapServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0">
+          <caret line="0" column="4" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="4" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/EnigmeReceive.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/EnigmeSend.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="23" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24203822">
-          <caret line="89" column="23" selection-start-line="89" selection-start-column="23" selection-end-line="89" selection-end-column="23" />
+        <state vertical-scroll-proportion="3.8025477">
+          <caret line="279" column="13" selection-start-line="279" selection-start-column="13" selection-end-line="279" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getOr#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getMD#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#getDoritos#0;class#CurrencyUI#0;class#Main#0" expanded="false" />
-            <element signature="method#start#0;class#Main#0" expanded="false" />
-            <element signature="class#connection#0;class#Main#0" expanded="false" />
-            <element signature="class#logIn#0;class#Main#0" expanded="false" />
-            <element signature="method#initializeMap#0;class#Main#0" expanded="false" />
-            <element signature="class#Quit#0;class#Main#0" expanded="false" />
-            <element signature="class#Free#0;class#Main#0" expanded="false" />
-            <element signature="class#Build#0;class#Main#0" expanded="false" />
           </folding>
         </state>
       </provider>
