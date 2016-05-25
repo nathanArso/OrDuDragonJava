@@ -48,7 +48,7 @@ public class Main extends Application {
 
     ArrayList<String> positions = new ArrayList<String>();
 
-    DataOutputStream PDFos;
+    PrintWriter PDFos;
     BufferedReader PDFis;
 
     public int or = 0;
@@ -98,24 +98,11 @@ public class Main extends Application {
     class deplacer implements Runnable {
         @Override
         public void run() {
-            try {
+                PDFos.println("GOTO " + selectedID);
+                PDFos.flush();
+                System.out.println("GOTO " + selectedID);
 
-                    //TODO to complete
-                    //PDFos = new DataOutputStream(socClientGame.getOutputStream());
-                    //PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
-
-                    PDFos.writeBytes("GOTO " + selectedID + "\n");
-                    PDFos.flush();
-                    System.out.println("GOTO " + selectedID);
-
-                    Platform.runLater(new reponse());
-
-            } catch (UnknownHostException e) {
-                System.err.println("Hote introuvable.");
-            } catch (IOException e) {
-                System.err.println("Erreur du socket de jeu.");
-            }
-
+                Platform.runLater(new reponse());
         }
     }
 
@@ -154,18 +141,16 @@ public class Main extends Application {
                     playerFree = false;
                     System.out.println("Capture par un goblin");
                 }
-
-                Platform.runLater(new CurrencyUI());
             } catch (SQLException sqe) {
                 System.err.println("Erreur dans la modification de la BD: " + sqe);
-            } catch (IOException ioe){
+            } catch (IOException ioe) {
                 System.err.println("Erreur dans la modification de la BD: " + ioe);
             }
         }
     }
 
-    class CurrencyUI implements Runnable{
-        public void run(){
+    class CurrencyUI implements Runnable {
+        public void run() {
             getOr();
             getDoritos();
             getMD();
@@ -211,12 +196,10 @@ public class Main extends Application {
     //Tache sans fin
     class TacheParallele implements Runnable {
         public void run() {
-
-
             while (true) {
                 //(Refresh)
                 try {
-                    PDFos.writeBytes("NOOP\n"); //Indique au serveur quon est toujours la
+                    PDFos.println("NOOP"); //Indique au serveur quon est toujours la
                     PDFos.flush();
 
                     line = posReader.readLine();
@@ -225,67 +208,63 @@ public class Main extends Application {
                         positions.add(line);
                         System.out.println(line);
 
-                        Platform.runLater(new refreshMap());
+                        refreshMap();
+                        Platform.runLater(new CurrencyUI());
                     }
                 } catch (IOException ioe) {
                     //TODO When game ends.
                     System.out.println("Erreur: " + ioe);
                 }
-                try {
-                    Thread.sleep(DELAI);
-                } catch (InterruptedException ie) {
-                }
             }
         }
     }
-    class refreshMap implements Runnable {
-        @Override
-        public void run() {
-            for (int i = 0; i < Main.noeuds.size(); ++i) Main.noeuds.get(i).setFill(Color.BLACK); //set color back to black
 
-            String combs[] = line.split(" ");
+    private void refreshMap() {
 
-            for (int i = 0; i < combs.length; ++i) {
-                String comb[] = combs[i].split(":");
+        for (int i = 0; i < Main.noeuds.size(); ++i) Main.noeuds.get(i).setFill(Color.BLACK); //set color back to black
 
-                switch (comb[1]) {
-                    case "J":
-                        //Gérer le joueur.
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
-                        break;
-                    case "T":
-                        //Gérer le troll
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
-                        break;
-                    case "G":
-                        //Gérer Gobelin
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.DARKRED);
-                        break;
-                    case "P":
-                        //Gérer pièce d'or
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GOLD);
-                        break;
-                    case "M":
-                        //Gérer Mountain Dew
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
-                        break;
-                    case "D":
-                        //Gerer Doritos
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.ORANGE);
-                        break;
-                    case "A":
-                        //Gerer auberges
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.MEDIUMPURPLE);
-                        break;
-                    case "N":
-                        //Gerer manoir
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
-                        break;
-                    case "C":
-                        //Gerer chateau
-                        Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUEVIOLET);
-                        break;
-                }
+        String combs[] = line.split(" ");
+
+        for (int i = 0; i < combs.length; ++i) {
+            String comb[] = combs[i].split(":");
+
+            switch (comb[1]) {
+                case "J":
+                    //Gérer le joueur.
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUE);
+                    break;
+                case "T":
+                    //Gérer le troll
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.RED);
+                    break;
+                case "G":
+                    //Gérer Gobelin
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.DARKRED);
+                    break;
+                case "P":
+                    //Gérer pièce d'or
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.GOLD);
+                    break;
+                case "M":
+                    //Gérer Mountain Dew
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.LIGHTGREEN);
+                    break;
+                case "D":
+                    //Gerer Doritos
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.ORANGE);
+                    break;
+                case "A":
+                    //Gerer auberges
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.MEDIUMPURPLE);
+                    break;
+                case "N":
+                    //Gerer manoir
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.PURPLE);
+                    break;
+                case "C":
+                    //Gerer chateau
+                    Main.noeuds.get(Integer.parseInt(comb[0])).setFill(Color.BLUEVIOLET);
+                    break;
             }
         }
     }
@@ -307,7 +286,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-       // socServer = new ServerSocket(PORT_MAP);
+        // socServer = new ServerSocket(PORT_MAP);
 
         System.out.println("Client connecte.");
 
@@ -362,7 +341,7 @@ public class Main extends Application {
     class connection implements Runnable {
         String url = "jdbc:oracle:thin:@205.237.244.251:1521:orcl";
 
-        public void run(){
+        public void run() {
             try {
                 OracleDataSource ods = new OracleDataSource();
 
@@ -378,7 +357,7 @@ public class Main extends Application {
 
 
     // Event clieck on connexion button
-    class logIn implements Runnable{
+    class logIn implements Runnable {
 
         @Override
         public void run() {
@@ -398,7 +377,7 @@ public class Main extends Application {
                 socClientGame = new Socket();
                 socClientGame.connect(adrGameServer);
 
-                PDFos = new DataOutputStream(socClientGame.getOutputStream());
+                PDFos = new PrintWriter(socClientGame.getOutputStream());
                 PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
                 posReader = new BufferedReader(new InputStreamReader(socClientPos.getInputStream()));
                 posWriter = new PrintWriter(new OutputStreamWriter(socClientPos.getOutputStream()));
@@ -409,8 +388,7 @@ public class Main extends Application {
             }
 
             try {
-
-                PDFos.writeBytes("HELLO zATTG " + ClientIP + "\n");
+                PDFos.println("HELLO zATTG " + ClientIP);
                 PDFos.flush();
                 System.out.println(posReader.readLine());
             } catch (IOException io) {
@@ -473,12 +451,10 @@ public class Main extends Application {
                 try {
                     conn.close();
                     //Reset currencies in BD
-                    PDFos.writeBytes("QUIT\n");
+                    PDFos.println("QUIT");
                     window.close();
                 } catch (SQLException sqle) {
                     System.err.println("Erreur lors de la fermeture de la connection a la BD: " + sqle);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
                 }
             });
         }
@@ -491,30 +467,25 @@ public class Main extends Application {
             freeButton.setLayoutY(10);
 
             freeButton.setOnAction(e -> {
-                try {
                     if (trollPrison && MD > 0) {
                         removeMD();
-                        PDFos.writeBytes("FREE\n");
+                        PDFos.println("FREE");
                         playerFree = true;
                         trollPrison = false;
                     } else if (goblinPrison && Doritos > 0) {
                         removeDoritos();
-                        PDFos.writeBytes("FREE\n");
+                        PDFos.println("FREE");
                         playerFree = true;
                         goblinPrison = false;
                     } else if ((goblinPrison || trollPrison) && or >= 3) {
                         removeOr();
                         removeOr();
                         removeOr();
-                        PDFos.writeBytes("FREE\n");
+                        PDFos.println("FREE");
                         playerFree = true;
                         trollPrison = false;
                         goblinPrison = false;
                     }
-
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
             });
         }
 
@@ -551,7 +522,7 @@ public class Main extends Application {
 
     class Build implements Runnable {
 
-        public void run(){
+        public void run() {
             buildButton.setLayoutX(100);
             buildButton.setLayoutY(10);
 
@@ -561,7 +532,7 @@ public class Main extends Application {
                         removeOr();
                         removeOr();
                         removeOr();
-                        PDFos.writeBytes("BUILD\n");
+                        PDFos.println("BUILD");
                         PDFis = new BufferedReader(new InputStreamReader(socClientGame.getInputStream()));
                         System.out.println(PDFis.readLine());
                     } else {
