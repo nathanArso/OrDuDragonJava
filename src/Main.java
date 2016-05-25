@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Or;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -17,7 +16,6 @@ import javafx.stage.Stage;
 
 import java.sql.*;
 
-import oracle.jdbc.*;
 import oracle.jdbc.pool.*;
 
 import javafx.scene.input.MouseEvent;
@@ -100,20 +98,13 @@ public class Main extends Application {
             PDFos.flush();
             System.out.println("GOTO " + selectedID);
 
-            Platform.runLater(new reponse());
-        }
-    }
-
-    class reponse implements Runnable {
-        @Override
-        public void run() {
             try {
                 linePDF = PDFis.readLine();
                 //if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
                 System.out.println(linePDF);
 
                 if (linePDF.startsWith("IP")){
-                    Platform.runLater(new EnigmeReceive());
+                   // Platform.runLater(new ServeurQuestion());
                 } else if (linePDF.startsWith("P")) {
                     CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
                     addCapital.executeUpdate();
@@ -273,14 +264,15 @@ public class Main extends Application {
         int y = (int) e.getY();
         System.out.println("Position de la souris: " + x + ", " + y);
 
-        for (int i = 0; i < noeuds.size(); i++) {
+        boolean fini = false;
+        for (int i = 1; i < noeuds.size() && !fini; i++) {
             if (noeuds.get(i).x < x + CIRCLE_RADIUS && noeuds.get(i).x > x - CIRCLE_RADIUS && noeuds.get(i).y < y + CIRCLE_RADIUS && noeuds.get(i).y > y - CIRCLE_RADIUS) {
                 selectedID = i;
                 selectedNoeud = noeuds.get(i);
+                Platform.runLater(new deplacer());
+                fini = true;
             }
         }
-
-        Platform.runLater(new deplacer());
     }
 
     @Override
