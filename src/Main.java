@@ -96,11 +96,11 @@ public class Main extends Application {
     class deplacer implements Runnable {
         @Override
         public void run() {
-                PDFos.println("GOTO " + selectedID);
-                PDFos.flush();
-                System.out.println("GOTO " + selectedID);
+            PDFos.println("GOTO " + selectedID);
+            PDFos.flush();
+            System.out.println("GOTO " + selectedID);
 
-                Platform.runLater(new reponse());
+            Platform.runLater(new reponse());
         }
     }
 
@@ -109,10 +109,12 @@ public class Main extends Application {
         public void run() {
             try {
                 linePDF = PDFis.readLine();
-                if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
+                //if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
                 System.out.println(linePDF);
 
-                if (linePDF.startsWith("P")) {
+                if (linePDF.startsWith("IP")){
+                    Platform.runLater(new EnigmeReceive());
+                } else if (linePDF.startsWith("P")) {
                     CallableStatement addCapital = conn.prepareCall("{ call JOUEUR.MISEAJOURCAPITALPLUS}");
                     addCapital.executeUpdate();
                 } else if (linePDF.startsWith("M")) {
@@ -275,9 +277,10 @@ public class Main extends Application {
             if (noeuds.get(i).x < x + CIRCLE_RADIUS && noeuds.get(i).x > x - CIRCLE_RADIUS && noeuds.get(i).y < y + CIRCLE_RADIUS && noeuds.get(i).y > y - CIRCLE_RADIUS) {
                 selectedID = i;
                 selectedNoeud = noeuds.get(i);
-                Platform.runLater(new deplacer());
             }
         }
+
+        Platform.runLater(new deplacer());
     }
 
     @Override
@@ -346,6 +349,9 @@ public class Main extends Application {
                 ods.setUser("ATTG");
                 ods.setPassword("GTTA");
                 conn = ods.getConnection();
+
+                CallableStatement reset = conn.prepareCall("{ call JOUEUR.MISEAZERO}");
+                reset.executeUpdate();
             } catch (SQLException sqle) {
                 System.err.println("Erreur dans la connexion: " + sqle.getMessage());
             }
@@ -464,25 +470,25 @@ public class Main extends Application {
             freeButton.setLayoutY(10);
 
             freeButton.setOnAction(e -> {
-                    if (trollPrison && MD > 0) {
-                        removeMD();
-                        PDFos.println("FREE");
-                        playerFree = true;
-                        trollPrison = false;
-                    } else if (goblinPrison && Doritos > 0) {
-                        removeDoritos();
-                        PDFos.println("FREE");
-                        playerFree = true;
-                        goblinPrison = false;
-                    } else if ((goblinPrison || trollPrison) && or >= 3) {
-                        removeOr();
-                        removeOr();
-                        removeOr();
-                        PDFos.println("FREE");
-                        playerFree = true;
-                        trollPrison = false;
-                        goblinPrison = false;
-                    }
+                if (trollPrison && MD > 0) {
+                    removeMD();
+                    PDFos.println("FREE");
+                    playerFree = true;
+                    trollPrison = false;
+                } else if (goblinPrison && Doritos > 0) {
+                    removeDoritos();
+                    PDFos.println("FREE");
+                    playerFree = true;
+                    goblinPrison = false;
+                } else if ((goblinPrison || trollPrison) && or >= 3) {
+                    removeOr();
+                    removeOr();
+                    removeOr();
+                    PDFos.println("FREE");
+                    playerFree = true;
+                    trollPrison = false;
+                    goblinPrison = false;
+                }
             });
         }
 
