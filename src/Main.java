@@ -46,8 +46,6 @@ public class Main extends Application {
     private PrintWriter posWriter;
     Stage window;
 
-    ArrayList<String> positions = new ArrayList<String>();
-
     PrintWriter PDFos;
     BufferedReader PDFis;
 
@@ -111,7 +109,7 @@ public class Main extends Application {
         public void run() {
             try {
                 linePDF = PDFis.readLine();
-                //if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
+                if(linePDF.equals("OK")) linePDF += " " + PDFis.readLine();
                 System.out.println(linePDF);
 
                 if (linePDF.startsWith("P")) {
@@ -205,7 +203,6 @@ public class Main extends Application {
                     line = posReader.readLine();
 
                     if (!line.equals("")) {
-                        positions.add(line);
                         System.out.println(line);
 
                         refreshMap();
